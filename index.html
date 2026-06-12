@@ -3,340 +3,2196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pharmakologie Quiz - SAB AKH Wien</title>
+    <title>Pharmakologie-Quiz — SAB Anästhesiepflege</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: linear-gradient(135deg, #1a3a52 0%, #2d1b69 50%, #1a3a52 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            padding: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
         }
-        .container { max-width: 800px; width: 100%; background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); padding: 40px; }
-        .title { font-size: 32px; font-weight: bold; color: #1a3a52; margin-bottom: 10px; }
-        .subtitle { color: #666; margin-bottom: 30px; font-size: 14px; }
-        .mode-buttons { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 100%;
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        
+        .question-container {
+            display: none;
+        }
+        
+        .question-container.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .option input[type="radio"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .option.correct {
+            border-color: #4caf50;
+            background: #f1f8f6;
+        }
+        
+        .option.incorrect {
+            border-color: #f44336;
+            background: #fdeaea;
+        }
+        
+        .option.correct::after {
+            content: "✓";
+            color: #4caf50;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .option.incorrect::after {
+            content: "✗";
+            color: #f44336;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+        
         button {
+            flex: 1;
             padding: 12px 20px;
             border: none;
             border-radius: 8px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            font-size: 14px;
+            transition: all 0.2s ease;
         }
-        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .mode-btn { background: #f0f0f0; color: #333; }
-        .mode-btn.active { background: #1a3a52; color: white; }
-        .start-btn { background: #2d5a7b; color: white; width: 100%; padding: 16px; font-size: 18px; margin-top: 20px; }
-        .start-btn:hover { background: #1a3a52; }
-        .checkbox { margin: 20px 0; display: flex; align-items: center; gap: 10px; }
-        .checkbox input { width: 20px; height: 20px; cursor: pointer; }
-        .checkbox label { cursor: pointer; }
-        .info { background: #e8f4f8; padding: 15px; border-radius: 8px; border-left: 4px solid #2d5a7b; margin-bottom: 20px; }
-        .info-text { font-weight: 600; color: #1a3a52; }
-        .info-sub { font-size: 13px; color: #666; margin-top: 3px; }
         
-        .quiz-container { display: none; }
-        .quiz-container.active { display: block; }
-        .progress { margin-bottom: 25px; }
-        .progress-text { font-size: 13px; color: #666; margin-bottom: 8px; }
-        .progress-bar { width: 100%; height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; }
-        .progress-fill { height: 100%; background: #2d5a7b; transition: width 0.3s; }
-        .score { float: right; text-align: right; }
-        .score-num { font-size: 24px; font-weight: bold; color: #2d5a7b; }
-        .score-text { font-size: 12px; color: #666; }
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
         
-        .question { margin: 30px 0; }
-        .question-num { font-size: 13px; color: #999; margin-bottom: 10px; }
-        .question-text { font-size: 20px; font-weight: 600; color: #1a3a52; margin-bottom: 20px; }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
         
-        .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-        .option {
-            padding: 15px 20px;
-            border: 2px solid #e0e0e0;
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-next {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-next:hover {
+            background: #e0e0e0;
+        }
+        
+        .result-message {
+            padding: 15px;
             border-radius: 8px;
-            background: #f9f9f9;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 16px;
-            font-weight: 500;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+            display: none;
         }
-        .option:hover:not(.answered) { background: #f0f0f0; border-color: #2d5a7b; }
-        .option.selected { border-color: #2d5a7b; background: #e8f4f8; }
-        .option.correct { background: #d4edda; border-color: #28a745; color: #155724; }
-        .option.incorrect { background: #f8d7da; border-color: #dc3545; color: #721c24; }
-        .option.answered { cursor: default; }
         
-        .feedback { padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none; }
-        .feedback.show { display: block; }
-        .feedback.correct { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
-        .feedback.incorrect { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+        .result-message.show {
+            display: block;
+        }
         
-        .next-btn { background: #2d5a7b; color: white; width: 100%; padding: 14px; display: none; }
-        .next-btn.show { display: block; }
+        .result-message.correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #4caf50;
+        }
         
-        .results { display: none; text-align: center; }
-        .results.active { display: block; }
-        .result-score { font-size: 60px; font-weight: bold; color: #2d5a7b; margin: 20px 0; }
-        .result-text { font-size: 24px; font-weight: 600; margin: 20px 0; }
-        .result-correct { font-size: 18px; color: #666; margin-bottom: 20px; }
-        .result-grade { font-size: 20px; font-weight: 600; margin: 20px 0; }
-        .result-excellent { color: #28a745; }
-        .result-good { color: #ffc107; }
-        .result-retry { color: #dc3545; }
+        .result-message.incorrect {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #f44336;
+        }
         
-        .button-group { display: flex; gap: 10px; margin-top: 30px; }
-        .button-group button { flex: 1; padding: 14px; }
-        .retry-btn { background: #2d5a7b; color: white; }
-        .share-btn { background: #6f42c1; color: white; }
+        .end-screen {
+            text-align: center;
+            display: none;
+        }
+        
+        .end-screen.show {
+            display: block;
+        }
+        
+        .score {
+            font-size: 48px;
+            color: #667eea;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .score-text {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- START SCREEN -->
-        <div id="startScreen" class="start-screen">
-            <div class="title">Pharmakologie Quiz</div>
-            <div class="subtitle">SAB Anästhesiepflege AKH Wien</div>
-            
-            <div class="info">
-                <div class="info-text">📊 164 Fragen insgesamt</div>
-                <div class="info-sub">144 Exam-Fragen + 20 Mechanismen-Fragen</div>
-            </div>
-
-            <div>
-                <div style="font-weight: 600; margin-bottom: 10px;">Modus wählen:</div>
-                <div class="mode-buttons">
-                    <button class="mode-btn active" onclick="setMode('all')">Alle (164)</button>
-                    <button class="mode-btn" onclick="setMode('exam')">Exam (144)</button>
-                    <button class="mode-btn" onclick="setMode('mechanisms')">Mechanismen (20)</button>
+        <h1>📚 Pharmakologie-Quiz</h1>
+        <p class="subtitle">SAB Anästhesiepflege — AKH Wien</p>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">Frage 1 von 164</div>
+        
+        <div id="quizContent">
+            <div class="question-container active" id="questionContainer">
+                <div class="question-number" id="questionNumber">Frage 1</div>
+                <div class="question-text" id="questionText"></div>
+                
+                <div class="result-message" id="resultMessage"></div>
+                
+                <div class="options" id="optionsContainer"></div>
+                
+                <div class="buttons">
+                    <button class="btn-submit" id="submitBtn" onclick="checkAnswer()">Antwort prüfen</button>
+                    <button class="btn-next" id="nextBtn" onclick="nextQuestion()" style="display: none;">Nächste</button>
                 </div>
             </div>
-
-            <div class="checkbox">
-                <input type="checkbox" id="shuffleCheck" onchange="toggleShuffle()">
-                <label for="shuffleCheck">🔀 Fragen zufällig mischen</label>
-            </div>
-
-            <button class="start-btn" onclick="startQuiz()">Quiz starten 🚀</button>
-        </div>
-
-        <!-- QUIZ SCREEN -->
-        <div id="quizScreen" class="quiz-container">
-            <div class="progress">
-                <div class="progress-text">
-                    Frage <span id="currentQuestionNum">1</span> von <span id="totalQuestions">164</span>
-                    <div class="score">
-                        <div class="score-num" id="percentageScore">0%</div>
-                        <div class="score-text"><span id="correctCount">0</span>/<span id="totalCount">0</span> richtig</div>
+            
+            <div class="end-screen" id="endScreen">
+                <h2>Quiz abgeschlossen! 🎉</h2>
+                <div class="score" id="finalScore"></div>
+                <div class="score-text" id="scoreText"></div>
+                
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="stat-number" id="correctCount">0</div>
+                        <div class="stat-label">Richtig</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="incorrectCount">0</div>
+                        <div class="stat-label">Falsch</div>
                     </div>
                 </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressBar" style="width: 0%"></div>
-                </div>
-            </div>
-
-            <div class="question">
-                <div class="question-num" id="questionLabel"></div>
-                <div class="question-text" id="questionText"></div>
-            </div>
-
-            <div class="options" id="optionsContainer"></div>
-
-            <div class="feedback" id="feedback"></div>
-
-            <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Nächste →</button>
-        </div>
-
-        <!-- RESULTS SCREEN -->
-        <div id="resultsScreen" class="results">
-            <div class="title">Ergebnis</div>
-            <div class="result-score" id="finalScore">0%</div>
-            <div class="result-correct" id="resultCorrect">0 von 0 richtig</div>
-            <div class="result-grade" id="resultGrade"></div>
-            
-            <div class="button-group">
-                <button class="retry-btn" onclick="restart()">🔄 Nochmal</button>
-                <button class="share-btn" onclick="shareResult()">📤 Teilen</button>
+                
+                <button class="btn-restart" onclick="restartQuiz()" style="margin-top: 30px;">Von vorne beginnen</button>
             </div>
         </div>
     </div>
 
     <script>
-        const QUIZ_DATA = [
-            { num: 1, text: "Was bedeutet Pharmakodynamik?", options: ["Was die Pharmaka mit dem Körper machen", "Was der Körper mit den Pharmaka macht", "Wie sich die Pharmaka im Körper verteilen", "Wie sich die Pharmaka aus dem Körper eliminieren", "Wie der Körper die Pharmaka aufnimmt"], answer: "A" },
-            { num: 2, text: "Was gehört nicht zum ADME bei der Pharmakokinetik?", options: ["Absorption", "Ausscheidung", "Verteilung", "Resorption", "Metabolismus"], answer: "D" },
-            { num: 3, text: "Welches Organ ist hauptsächlich am First-Pass-Effekt beteiligt?", options: ["Leber", "Haut", "Darm", "Niere", "Magen"], answer: "A" },
-            { num: 4, text: "Propofol Induktionsdosis:", options: ["0,5–1 mg/kg", "1,5–2,5 mg/kg", "3–4 mg/kg", "5–6 mg/kg"], answer: "B" },
-            { num: 5, text: "Fentanyl ist gegenüber Morphin:", options: ["10× potenter", "50× potenter", "75–125× potenter", "weniger potent"], answer: "C" },
-            { num: 6, text: "Rocuronium RSI-Dosis:", options: ["0,3 mg/kg", "0,6 mg/kg", "1,2 mg/kg", "1,5 mg/kg"], answer: "C" },
-            { num: 7, text: "Succinylcholin ist:", options: ["nicht-depolarisierend", "depolarisierend", "kompetitiv reversibel", "mit Sugammadex antagonisierbar"], answer: "B" },
-            { num: 8, text: "Sugammadex sofort-Dosis:", options: ["2 mg/kg", "4 mg/kg", "8 mg/kg", "16 mg/kg"], answer: "D" },
-            { num: 201, text: "Was ist Affinität?", options: ["Wie schnell wirkt das Medikament", "Wie fest das Medikament an den Rezeptor bindet", "Wie viel Medikament man braucht", "Der maximale Effekt"], answer: "B" },
-            { num: 202, text: "Potency beschreibt:", options: ["Bindungsfestigkeit", "Wie viel Medikament man braucht für einen Effekt", "Wie lange es wirkt", "Der Maximaleffekt"], answer: "B" },
-        ];
+        // Alle 164 Fragen
+        const allQuestions = [
+ {
+  "num": 1,
+  "text": "Was bedeutet Pharmakodynamik?",
+  "options": [
+   "Was die Pharmaka mit dem Körper machen",
+   "Was der Körper mit den Pharmaka macht",
+   "Wie sich die Pharmaka im Körper verteilen",
+   "Wie sich die Pharmaka aus dem Körper eliminieren",
+   "Wie der Körper die Pharmaka aufnimmt"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 2,
+  "text": "Was gehört nicht zum ADME bei der Pharmakokinetik?",
+  "options": [
+   "Absorption",
+   "Ausscheidung",
+   "Verteilung",
+   "Resorption",
+   "Metabolismus"
+  ],
+  "answer": "D"
+ },
+ {
+  "num": 3,
+  "text": "Welches Organ ist hauptsächlich am First-Pass-Effekt beteiligt?",
+  "options": [
+   "Leber",
+   "Haut",
+   "Darm",
+   "Niere",
+   "Magen"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 4,
+  "text": "Welche Veränderungen bei älteren Menschen bei der Physiologie trifft nicht zu?",
+  "options": [
+   "Veränderungen des Volume of distribution im Alter führt zu späterem Wirkeintritt bei ausgewählten Medikamenten",
+   "Veränderung der Anteile an Muskelmasse und Körperfett",
+   "Reduzierte Nieren-/Leber-Clearance verkürzt die Dauer der Wirkung",
+   "50% weniger Midazolam/Fentanyl/Propofol erforderlich",
+   "Pro Dekade an Lebensalter geringerer MAC-Wert erforderlich"
+  ],
+  "answer": "C"
+ },
+ {
+  "num": 5,
+  "text": "Welche MAC-Wert gehört NICHT zu den Inhalationsanästhetika?",
+  "options": [
+   "Sevofluran 2,0",
+   "Lachgas 105%",
+   "Desfluran 7,25",
+   "Propofol 1,5–2,5 mg/kg",
+   "Isofluran 1,15"
+  ],
+  "answer": "D"
+ },
+ {
+  "num": 6,
+  "text": "Was beschreibt den Second-Gas-Effekt?",
+  "options": [
+   "Konzentrationssteigerung des schneller aufgenommenen Gases führt zur raschen Anflutung des Lachgases",
+   "Konzentrationssteigerung des langsamer aufgenommenen Gases führt zur raschen Anflutung des Lachgases",
+   "Konzentrationssteigerung des schneller aufgenommenen Gases führt zur Verzögerung der Anflutung des Lachgases",
+   "Konzentrationssteigerung von Lachgas führt zur Verzögerung aller anderen Gase",
+   "Lachgas kann nicht als Second Gas verwendet werden"
+  ],
+  "answer": "B"
+ },
+ {
+  "num": 7,
+  "text": "Welche Aussage zur Diffusionshypoxie trifft zu?",
+  "options": [
+   "Sie tritt nach Einleitung mit Sevofluran auf",
+   "Sie tritt nach Ausleitung mit Lachgas auf — daher FiO₂ 100% ≥5 min empfohlen",
+   "Sie tritt nach Remifentanil-Gabe auf",
+   "Sie tritt nach Rocuronium-Gabe auf",
+   "Sie kann durch schnellere Beatmung verhindert werden"
+  ],
+  "answer": "B"
+ },
+ {
+  "num": 8,
+  "text": "Propofol — was gehört NICHT zu den bekannten Merkmalen?",
+  "options": [
+   "Induktiondosis: 1,5–2,5 mg/kg",
+   "Perfusionsdosis: 4–12 mg/kg/h",
+   "PRIS ab >4–5 mg/kg/h + >48h",
+   "RR↑, HR↑",
+   "Antiemetische Wirkung"
+  ],
+  "answer": "D"
+ },
+ {
+  "num": 9,
+  "text": "Esketamin unterscheidet sich von Propofol hauptsächlich durch:",
+  "options": [
+   "NMDA-Antagonismus statt GABA-A-Agonismus",
+   "Sympathikusaktivierung statt Sympathikusdepression",
+   "Schnellere Anflutung",
+   "Höhere Opioiddosis erforderlich",
+   "Keine Antiemetika notwendig"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 10,
+  "text": "Midazolam bei Kindern p.o. — welche Dosis?",
+  "options": [
+   "0,1–0,2 mg/kg",
+   "0,4–0,5 mg/kg",
+   "1,0–1,5 mg/kg",
+   "2,0–3,0 mg/kg",
+   "5,0 mg/kg"
+  ],
+  "answer": "B"
+ },
+ {
+  "num": 11,
+  "text": "Flumazenil-Antidot zu Midazolam — initiale Dosis?",
+  "options": [
+   "0,05 mg",
+   "0,1 mg",
+   "0,2 mg",
+   "0,5 mg",
+   "1,0 mg"
+  ],
+  "answer": "C"
+ },
+ {
+  "num": 12,
+  "text": "Etomidat — welche Besonderheit bei längerer Gabe?",
+  "options": [
+   "Hirnödem",
+   "Leberversagen",
+   "NNR-Suppression 6–8h",
+   "Muskelrelaxation",
+   "Atemdepression"
+  ],
+  "answer": "C"
+ },
+ {
+  "num": 13,
+  "text": "Thiopental — absolute Kontraindikation?",
+  "options": [
+   "Porphyrie",
+   "Asthma",
+   "Hypertonie",
+   "Diabetes",
+   "Niereninsuffizienz"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 14,
+  "text": "Lokalanästhetika — Unterschied Estertyp vs. Amidtyp?",
+  "options": [
+   "Estertyp länger, Amidtyp kürzer",
+   "Estertyp kürzer, Amidtyp länger + höhere Allergie-Inzidenz bei Amidtyp",
+   "Estertyp kürzer, höheres Allergie-Risiko; Amidtyp länger",
+   "Kein Unterschied in Allergierisiko",
+   "Estertyp nur intravenös"
+  ],
+  "answer": "C"
+ },
+ {
+  "num": 15,
+  "text": "Prilocain — besondere Nebenwirkung?",
+  "options": [
+   "QT-Verlängerung",
+   "Methämoglobinämie → Methylenblau-Antidot",
+   "Nierentoxizität",
+   "Hepatotoxizität",
+   "Atemdepression"
+  ],
+  "answer": "B"
+ },
+ {
+  "num": 16,
+  "text": "LAST (Local Anesthetic Systemic Toxicity) — Behandlung?",
+  "options": [
+   "Adrenalin 1:1000 schnell",
+   "Lidocain-Infusion",
+   "Lipid-Rescue 20% (Intralipid) + Amiodaron (KEIN Lidocain!)",
+   "Magnesium",
+   "Bikarbonat"
+  ],
+  "answer": "C"
+ },
+ {
+  "num": 17,
+  "text": "Succinylcholin — Dosis und Onset?",
+  "options": [
+   "1–1,5 mg/kg; Onset 30–60 sec",
+   "0,6 mg/kg; Onset 60–90 sec",
+   "2,0 mg/kg; Onset 15–30 sec",
+   "0,3 mg/kg; Onset 120 sec",
+   "1,5–2,0 mg/kg; Onset 5–10 sec"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 18,
+  "text": "Succinylcholin — absolute Kontraindikation?",
+  "options": [
+   "Asthma",
+   "Maligne Hyperthermie + Hyperkaliämie + Verbrennung (ab 24h)",
+   "Leichte Niereninsuffizienz",
+   "Niedriger Blutdruck",
+   "Übergewicht"
+  ],
+  "answer": "B"
+ },
+ {
+  "num": 19,
+  "text": "Rocuronium — RSI-Dosis und Standard-Dosis?",
+  "options": [
+   "RSI 1,2 mg/kg; Standard 0,6 mg/kg",
+   "RSI 0,6 mg/kg; Standard 1,2 mg/kg",
+   "RSI 2,0 mg/kg; Standard 1,5 mg/kg",
+   "RSI 0,3 mg/kg; Standard 0,2 mg/kg",
+   "RSI 1,5 mg/kg; Standard 0,9 mg/kg"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 20,
+  "text": "Cis-Atracurium — welche Elimination?",
+  "options": [
+   "Nur enzymatisch",
+   "Nur renal",
+   "Hofmann-Elimination (unabhängig von Leber/Niere)",
+   "Plasmaenzym-Abbau",
+   "Gallische Ausscheidung"
+  ],
+  "answer": "C"
+ },
+ {
+  "num": 21,
+  "text": "Sugammadex — warum nicht bei Cis-Atracurium?",
+  "options": [
+   "Sugammadex wirkt nur auf Aminosteroide, nicht auf Benzylisochinoline",
+   "Cis-Atracurium wird zu schnell abgebaut",
+   "Sugammadex ist zu teuer",
+   "Cis-Atracurium ist zu alt",
+   "Sugammadex bewirkt Histaminfreisetzung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 22,
+  "text": "Sugammadex-Dosierung — je nach TOF-Wert?",
+  "options": [
+   "Sofort 16 mg/kg; PTC 1–2: 4 mg/kg; ab T2: 2 mg/kg",
+   "Sofort 8 mg/kg; alle Dosierungen gleich",
+   "Sofort 32 mg/kg unabhängig von TOF",
+   "Nur bei PTC <1 anwenden",
+   "Maximum 2 mg/kg"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 23,
+  "text": "Neostigmin — Vorbedingung und Koadministration?",
+  "options": [
+   "Erst nach TOF 3–4; immer mit Atropin oder Robinul kombiniert",
+   "Bereits ab TOF 1 verwendbar; ohne Atropin",
+   "Jederzeit ohne Bedingungen",
+   "Nur wenn Sugammadex kontraindiziert ist",
+   "Maximum 2 mg unabhängig von TOF"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 24,
+  "text": "Morphin — Potenzrelation zu anderen Opioiden?",
+  "options": [
+   "Potenz 1 (Referenz)",
+   "Potenz 75–125×",
+   "Potenz 6–7,5×",
+   "Potenz 0,7×",
+   "Potenz 100× höher als Fentanyl"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 25,
+  "text": "Morphin i.v. — Dosis?",
+  "options": [
+   "1–2 mg",
+   "5–10 mg",
+   "20–30 mg",
+   "50 mg",
+   "0,5 mg"
+  ],
+  "answer": "B"
+ },
+ {
+  "num": 26,
+  "text": "Morphin bei Niereninsuffizienz — besondere Betrachtung?",
+  "options": [
+   "Normale Dosis, da die Metaboliten unwirksam sind",
+   "M6G (aktiver Metabolit) akkumuliert — Dosen reduzieren",
+   "Morphin wird nicht metabolisiert",
+   "Keine Dosisanpassung erforderlich",
+   "Nur peripher wirksam"
+  ],
+  "answer": "B"
+ },
+ {
+  "num": 27,
+  "text": "Fentanyl — Potenzrelation und CSHT nach 6h Infusion?",
+  "options": [
+   "Potenz 75–125×; CSHT ~250 min",
+   "Potenz 1; CSHT ~30 min",
+   "Potenz 50×; CSHT ~60 min",
+   "Potenz 200×; CSHT ~500 min",
+   "Potenz 25×; CSHT ~120 min"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 28,
+  "text": "Remifentanil — Kontraindikation und Charakteristika?",
+  "options": [
+   "CSHT 3–10 min; KEINE peridural, da Glycin + Muskelrelaxans-ähnliche NW",
+   "CSHT 30 min; kann periduraliert werden",
+   "CSHT 60 min; Standard-Opioid",
+   "CSHT >120 min; nur i.v.",
+   "Kann p.o. gegeben werden"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 29,
+  "text": "Piritramid — Potenz und Verwendung in Österreich?",
+  "options": [
+   "Potenz ~0,7×; AWR-Standard in Österreich",
+   "Potenz 100×; nicht in Österreich",
+   "Potenz 1; nur in Notfällen",
+   "Potenz 2×; intramuskulär",
+   "Potenz 0,2×; pädiatrisch"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 30,
+  "text": "Hydromorphon — Potenz und Kontext?",
+  "options": [
+   "Potenz 6–7,5×; bei Niereninsuffizienz sicherer als Morphin",
+   "Potenz 1; intramuskulär",
+   "Potenz 75×; Remifentanil-ähnlich",
+   "Potenz 0,5×; pädiatrisch",
+   "Potenz 100×; nur i.v."
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 31,
+  "text": "Nalbuphin — Besonderheit als κ-Agonist/µ-Antagonist?",
+  "options": [
+   "Ceiling für Atemdepression bei 30 mg; sicherer Analgetikum",
+   "Unbegrenzte Steigerung möglich wie bei Morphin",
+   "Keine Atemdepression",
+   "Größerer Atemdepressionseffekt als Morphin",
+   "Keine Analgesie"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 32,
+  "text": "Naloxon — Antidot zu Opioiden — Dosierung und Wirkdauer?",
+  "options": [
+   "0,4 mg/ml verdünnt auf 40 µg/ml; Wirkdauer ~30 min → Rebound möglich",
+   "0,4 mg unverdünnt; Wirkdauer >2h",
+   "0,1 mg/ml verdünnt; Wirkdauer 5 min",
+   "1,0 mg/ml; Wirkdauer 10 min",
+   "Keine Dosisverdünnung erforderlich"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 33,
+  "text": "Diclofenac — maximale Tagesdosis?",
+  "options": [
+   "100 mg",
+   "150 mg",
+   "300 mg",
+   "500 mg",
+   "Keine Obergrenze"
+  ],
+  "answer": "B"
+ },
+ {
+  "num": 34,
+  "text": "Ibuprofen — maximale Tagesdosis?",
+  "options": [
+   "1200 mg",
+   "1800 mg",
+   "2400 mg",
+   "3600 mg",
+   "Beliebig"
+  ],
+  "answer": "C"
+ },
+ {
+  "num": 35,
+  "text": "Parecoxib (Dynastat) — maximale Tagesdosis?",
+  "options": [
+   "40 mg",
+   "60 mg",
+   "80 mg",
+   "160 mg",
+   "Keine Obergrenze"
+  ],
+  "answer": "C"
+ },
+ {
+  "num": 36,
+  "text": "Metamizol — besondere Nebenwirkung?",
+  "options": [
+   "Leberversagen",
+   "Agranulozytose",
+   "Nierentoxizität",
+   "Atemdepression",
+   "Herzrhythmusstörungen"
+  ],
+  "answer": "B"
+ },
+ {
+  "num": 37,
+  "text": "Paracetamol — Lebertoxizität ab welcher Gesamtdosis?",
+  "options": [
+   "2,5–5 g",
+   "7,5–10 g",
+   "15–20 g",
+   "30 g",
+   "50 g"
+  ],
+  "answer": "B"
+ },
+ {
+  "num": 38,
+  "text": "Adrenalin i.v. Bolus — Dosierungsschritte bei Reanimation?",
+  "options": [
+   "1–10–50–100 µg; ab 3. Schock schockbar; sofort bei nicht-schockbar",
+   "0,1–1–5–10 mg",
+   "10–50–100–500 µg",
+   "Nur 1 mg unabhängig vom Rhythmus",
+   "0,01 mg/kg immer"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 39,
+  "text": "Adrenalin i.m. bei Anaphylaxie — Dosis?",
+  "options": [
+   "100 µg",
+   "250 µg",
+   "500 µg",
+   "1000 µg",
+   "2000 µg"
+  ],
+  "answer": "C"
+ },
+ {
+  "num": 40,
+  "text": "Noradrenalin — 1. Wahl Vasopressor — Bolus und Perfusionsdosis?",
+  "options": [
+   "Bolus 5–100 µg; Perfusor 0,05–0,3 µg/kg/min",
+   "Bolus 1–10 µg; Perfusor 0,01–0,05 µg/kg/min",
+   "Bolus 100–500 µg; Perfusor 1,0 µg/kg/min",
+   "Nur Perfusor, kein Bolus",
+   "Bolus 50–100 µg; Perfusor 0,5–1,0 µg/kg/min"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 41,
+  "text": "Phenylephrin — Charakteristika?",
+  "options": [
+   "Reiner α1; Bolus 50–100 µg",
+   "β1-Agonist; Bolus 5 mg",
+   "Mixed α1/β1; Bolus 1 mg",
+   "κ-Opioid; kein Bolus",
+   "Muskelrelaxans; nicht hämodynamisch"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 42,
+  "text": "Ephedrin — Besonderheit?",
+  "options": [
+   "5 mg i.v.; Tachyphylaxie",
+   "50 mg p.o.; langwirksam",
+   "Inhalativ; direkte Bronchodilatation",
+   "Keine Tachyphylaxie",
+   "Selektiver α2-Agonist"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 43,
+  "text": "Dobutamin — Rezeptor-Selektivität?",
+  "options": [
+   "β1 > β2; 2–10 µg/kg/min",
+   "α1 > β1; 0,1 µg/kg/min",
+   "β2 > β1; 20 µg/kg/min",
+   "Κ-Opioid-ähnlich",
+   "Muskelrelaxans"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 44,
+  "text": "Esmolol — Selektivität und Einsatz?",
+  "options": [
+   "β1-selektiv; SVT Bolus 500 µg/kg/min 1min, dann 50–200 µg/kg/min",
+   "α1-selektiv; Bolus 50 µg",
+   "Nicht-selektiv; Dauer >2h",
+   "κ-selektiv; Analgesie",
+   "Muskelrelaxans; Intubation"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 45,
+  "text": "α2-Rezeptoren — zentrale Wirkung bei α2-Aktivierung?",
+  "options": [
+   "Sympathikotonus↓, Vagotonus↑, Analgesie, Sedierung, Anxiolyse",
+   "Sympathikotonus↑, Tachykardie, Hypertonie",
+   "Bronchospasmus",
+   "Muskelrelaxation",
+   "Keine Auswirkung auf ZNS"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 46,
+  "text": "α2-Rezeptoren peripher — Wirkung?",
+  "options": [
+   "Stimulierung der Noradrenalinfreisetzung",
+   "Hemmung der Noradrenalinfreisetzung (präsynaptisch)",
+   "Muskelrelaxation",
+   "Antiemetische Wirkung",
+   "Analgesie"
+  ],
+  "answer": "B"
+ },
+ {
+  "num": 47,
+  "text": "Clonidin — Dosierung und besondere Einleitung?",
+  "options": [
+   "1ml=0,15mg; initialer RR-Anstieg bei Bolus (α1); Bolus 2–4 µg/kg; Perfusor 30–120 µg/h; CAVE Rebound-Hypertension",
+   "1ml=1,5mg; kein RR-Anstieg",
+   "1ml=0,015mg; Bolus 20 µg/kg",
+   "Nur peridurale Anwendung",
+   "Nur als Inhalation"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 48,
+  "text": "Dexmedetomidin — Selektivität und Einsatz?",
+  "options": [
+   "10× selektiver auf α2 als Clonidin; ICU-Sedierung; Initial 0,7 µg/kg/h, dann 0,2–1,4 µg/kg/h",
+   "Gleich selektiv wie Clonidin",
+   "Weniger selektiv als Clonidin; 5× Dosis erforderlich",
+   "β1-Agonist; Tachykardie",
+   "Analgetikum; keine Sedierung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 49,
+  "text": "PONV (Postoperative Nausea and Vomiting) — Inzidenz und Hochrisikofaktor?",
+  "options": [
+   "Inzidenz 30%, Hochrisiko 80%; Apfel-Score 4 Faktoren",
+   "Inzidenz 5%, keine Hochrisikofaktoren",
+   "Inzidenz 90%, alle Patienten gefährdet",
+   "Inzidenz 10%, nur bei Kindern",
+   "Inzidenz 70%, unabhängig von Faktoren"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 50,
+  "text": "Ondansetron — Mechanismus und Besonderheit?",
+  "options": [
+   "5-HT3-Antagonist; Nebenwirkung QT-Verlängerung",
+   "D2-Antagonist; kein QT-Risiko",
+   "5-HT3-Agonist; Erbrechen fördernd",
+   "NK1-Antagonist; Hirnödem",
+   "Muskarinischer Antagonist; Tachykardie"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 51,
+  "text": "Droperidol — Mechanismus und Einsatz?",
+  "options": [
+   "D2-Antagonist; antiemetisch wirksam",
+   "5-HT3-Antagonist; Konkurrenz zu Ondansetron",
+   "Opioid-ähnlich; Atemdepression",
+   "α2-Agonist; Sedierung",
+   "Muskelrelaxans; nicht antiemetisch"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 52,
+  "text": "Dexamethason bei PONV — Timing?",
+  "options": [
+   "Früh (Induktion) geben",
+   "Erst 1h vor Ausleitung",
+   "Jederzeit wirksam",
+   "Nur postoperativ",
+   "Intraoperativ am wirksamsten"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 53,
+  "text": "Affinität — Definition?",
+  "options": [
+   "Fähigkeit eines Liganden, an einen Rezeptor zu binden",
+   "Stärke der Effekt-Ausübung nach Bindung",
+   "Geschwindigkeit der Wirkstoffaufnahme",
+   "Dauer der Rezeptorbindung",
+   "Metabolische Elimination"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 54,
+  "text": "Potency — Definition?",
+  "options": [
+   "Die Menge eines Stoffes, die notwendig ist, um einen bestimmten Effekt zu erzeugen",
+   "Die Stärke der Bindung an den Rezeptor",
+   "Die Dauer der Wirkung",
+   "Die Metabolisierungsgeschwindigkeit",
+   "Die Toxizität"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 55,
+  "text": "Efficacy — Definition?",
+  "options": [
+   "Die maximale Effektstärke nach Rezeptor-Besetzung",
+   "Die minimale Bindungsaffinität",
+   "Die Ausscheidungsgeschwindigkeit",
+   "Die Magensäure-Resistenz",
+   "Die Plasmaproteinbindung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 56,
+  "text": "Partialagonist — Charakteristika?",
+  "options": [
+   "Submaximale Efficacy; weniger Effekt als Vollagonist auch bei maximaler Besetzung",
+   "Vollständige Efficacy wie Vollagonist",
+   "Keine Affinität; Antagonist",
+   "Super-Efficacy; stärkerer Effekt",
+   "Keine Bindung möglich"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 57,
+  "text": "Kompetitiver Antagonist — Charakteristika?",
+  "options": [
+   "Kann durch höhere Agonist-Konz. verdrängt werden",
+   "Irreversible Bindung; nicht verdrängt",
+   "Agonistisch wirksam",
+   "Keine Rezeptor-Bindung",
+   "Aktiviert mehrere Rezeptortypen"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 58,
+  "text": "Nicht-kompetitiver Antagonist — Charakteristika?",
+  "options": [
+   "Irreversible Bindung; Maximaleffekt↓ auch bei hoher Agonist-Konz.",
+   "Kann verdrängt werden; Affinität niedrig",
+   "Agonistisch wirksam",
+   "Nur bei niedriger Konz. aktiv",
+   "Keine Rezeptor-Bindung möglich"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 59,
+  "text": "CSHT (Context-Sensitive Half-Time) — Bedeutung?",
+  "options": [
+   "Zeitspanne nach langer Infusion, bis die Konzentration um 50% sinkt (abhängig von Infusionsdauer)",
+   "Halbwertszeit im Plasma",
+   "Metabolisierungszeit in der Leber",
+   "Renal ausgeschiedene Menge",
+   "Protein-Bindungsgrad"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 60,
+  "text": "Remimazolam — Vergleich zu Propofol und Midazolam?",
+  "options": [
+   "Schnelle Wirkung wie Propofol; Metabolit inaktiv wie Midazolam (Esterase-abhängig)",
+   "Langsame Wirkung; lange HWZ",
+   "Muskelrelaxans",
+   "Nur peridurale Anwendung",
+   "Keine Sedierungseigenschaften"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 61,
+  "text": "Barbiturat (Thiopental) — pH-Wert und Gewebe-Reizung?",
+  "options": [
+   "pH 10,6; extravascular sehr reizend (Nekrose bei extraluminaler Injektion)",
+   "pH 7,4; neutral",
+   "pH 2,0; sehr sauer",
+   "pH 8,0; schwach basisch",
+   "Keine pH-Auswirkung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 62,
+  "text": "GABA-A — Mechanismus bei Benzodiazepinen/Barbiturate?",
+  "options": [
+   "↑ GABA-Öffnung der Cl⁻-Kanäle → Hyperpolarisation → Sedierung",
+   "↓ GABA-Wirkung",
+   "Acetylcholin-Blockade",
+   "Nicotinrezeptor-Aktivierung",
+   "Calcium-Kanal-Öffnung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 63,
+  "text": "NMDA-Rezeptor — Antagonismus (z.B. Esketamin)?",
+  "options": [
+   "Blockade des Glutamat-Effekts → Sedierung, Analgesie, keine Atemdepression",
+   "GABA-Potenzierung",
+   "Muskarinischer Agonismus",
+   "Opioid-Agonismus",
+   "Histamin-Freisetzung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 64,
+  "text": "Muskelrelaxanzien — Depolarisierende (Succinylcholin) Mechanismus?",
+  "options": [
+   "Nachahmung von Acetylcholin → Dauerdepolarisation → Lähmung",
+   "Blockade der nikotinischen Rezeptoren",
+   "GABA-A-Potenzierung",
+   "Calciumkanal-Blockade",
+   "Natrium-Kanal-Öffnung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 65,
+  "text": "Muskelrelaxanzien — Nicht-depolarisierende (Rocuronium) Mechanismus?",
+  "options": [
+   "Kompetitiver Antagonismus am nikotinischen Rezeptor",
+   "Depolarisierende Wirkung",
+   "GABA-A-Blockade",
+   "Opioid-Agonismus",
+   "Histaminfreisetzung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 66,
+  "text": "Lokalanästhetika — Mechanismus?",
+  "options": [
+   "Blockade von Na⁺-Kanälen → Leitungsblockade",
+   "GABA-A-Aktivierung",
+   "Opioid-Bindung",
+   "Acetylcholin-Freisetzung",
+   "Muskelrelaxation"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 67,
+  "text": "Opioide — µ-Rezeptor-Agonismus — klassische Effekte?",
+  "options": [
+   "Analgesie, Sedierung, Atemdepression, Miosis, Abhängigkeitspotential",
+   "Tachykardie, Mydriasis, Hyperventilation",
+   "Keine CNS-Effekte",
+   "Nur muskulär wirksam",
+   "Antiemetisch"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 68,
+  "text": "κ-Opioid-Rezeptor (Nalbuphin) — Unterschied zu µ?",
+  "options": [
+   "κ-Agonismus ohne µ-Agonismus reduziert Abhängigkeitspotential; κ hat Ceiling für Atemdepression",
+   "κ und µ sind identisch",
+   "κ bewirkt nur Euphorie",
+   "κ ist nicht spezifisch",
+   "κ hat keine analgetische Wirkung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 69,
+  "text": "Adrenalin-Dosisabhängigkeit — α- vs. β-Wirkung?",
+  "options": [
+   "Niedrig-Dosis: β2-Effekt (Vasodilation); mittlere Dosis: β1 (Herz); hohe Dosis: α1-Vasokonstriktion",
+   "Alle Dosen gleich wirksam",
+   "Nur α-Wirkung unabhängig von Dosis",
+   "Nur β-Wirkung vorhanden",
+   "Dopamin-ähnlich"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 70,
+  "text": "Antiemetika — Ondansetron (5-HT3)?",
+  "options": [
+   "Blockade des Alarmempfängers für Übelkeit → Antiemesis",
+   "Dopamin-Agonismus",
+   "Histamin-Blockade",
+   "Acetylcholin-Aktivierung",
+   "Opioid-Agonismus"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 71,
+  "text": "Antiemetika — Droperidol (D2)?",
+  "options": [
+   "Dopamin-Antagonismus → Blockade der Übelkeits-Signale",
+   "5-HT3-Agonismus",
+   "GABA-A-Aktivierung",
+   "Opioid-Blockade",
+   "Histamin-Aktivierung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 72,
+  "text": "Dexamethason bei PONV — Mechanismus?",
+  "options": [
+   "Periphere (GI) + zentrale antiemetische Effekte; genaue Mechanismen teilweise unklar",
+   "Nur zentrale Blockade",
+   "Nur periphere Blockade",
+   "Opioid-ähnlich",
+   "Keine antiemetische Wirkung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 73,
+  "text": "Opioide — Toleranz-Entwicklung?",
+  "options": [
+   "Reduktion der Rezeptor-Sensitivität → höhere Dosen erforderlich",
+   "Keine Toleranz möglich",
+   "Nur bei Morphin",
+   "Nur psychisch",
+   "Permanente, irreversible Bindung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 74,
+  "text": "OIH (Opioid-Induced Hyperalgesia) — Definition?",
+  "options": [
+   "Paradoxe Zunahme der Schmerzen bei Opioid-Gabe; bedingt durch NMDA-Aktivierung",
+   "Gewöhnung an Opioide",
+   "Antianalgetische Wirkung",
+   "Muskelrelaxation",
+   "Keine bekannte Nebenwirkung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 75,
+  "text": "Amiodaron bei CPR — Dosierungsschritte?",
+  "options": [
+   "Nach 3. Schock 300 mg; nach 5. Schock 150 mg",
+   "Erste Dosis 500 mg; dann 200 mg",
+   "Nur 100 mg gesamt",
+   "Unbegrenzte Dosen",
+   "Kein Amiodaron bei CPR"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 76,
+  "text": "Infusionstherapie — CAVE-Komplikationen bei KCl-Infusionen?",
+  "options": [
+   "Aitchthromben, Phlebitis, Kardiolarrhythmien bei zu schneller Infusion",
+   "Nur Hyperkalämie",
+   "Keine Komplikationen",
+   "Nur mit Glucose kombiniert",
+   "Nur intramuskulär sicher"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 77,
+  "text": "Hypokalämie-Korrektur — maximale Infusionsrate?",
+  "options": [
+   "20 mEq/h; max 240 mEq/Tag",
+   "100 mEq/h; unbegrenzt",
+   "1 mEq/h; sehr langsam",
+   "Nur p.o.",
+   "Keine maximale Grenze"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 78,
+  "text": "Hyperkalämie-Behandlung — medikamentöse Optionen?",
+  "options": [
+   "Insulin + Glucose, Calciumgluconat, Natriumbikarbonat, Diuretika, Kationen-Austauschharz",
+   "Nur Diuretika",
+   "Nur Insulin",
+   "Kalium-Supplementation",
+   "Acetylcholin"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 79,
+  "text": "Säure-Basen-Haushalt — Differenzialdiagnose metabolische Azidose?",
+  "options": [
+   "Anion-Gap vs. Nicht-Anion-Gap (NAGMA); Laktatazidose, Ketoazidose, Niereninsuffizienz, Intoxikation",
+   "Nur Hyperventilation",
+   "Nur Atemstörung",
+   "Keine Differenzierung",
+   "Kalium-Verlust"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 80,
+  "text": "Hypothermie-Betreuung — ECC-Rhythmus und CPR?",
+  "options": [
+   "VF: 1 Schock; danach alle 3–5 min wiederholen. Adrenalin um 5 min verzögern, wenn T <30°C; maximal 3 Dosen",
+   "Normale CPR-Intervalle",
+   "Kein Adrenalin bei Hypothermie",
+   "Sofortige Rewarming ohne CPR",
+   "Keine spezifischen Richtlinien"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 81,
+  "text": "Anaphylaxie — Notfallbehandlung Ranking?",
+  "options": [
+   "1. Adrenalin i.m. 0,5 mg (adult); 2. IV-Zugang; 3. Antihistamin + Corticoid; 4. ggf. 2. Adrenalin-Dosis",
+   "1. IV-Zugang; 2. Antihistamin; 3. Adrenalin",
+   "1. Nur Antihistamin",
+   "1. Flüssigkeitsbelastung",
+   "Kein Adrenalin bei Anaphylaxie"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 82,
+  "text": "Perioperative Antibiotikaprophylaxe — häufig verwendetes Agens?",
+  "options": [
+   "Cefuroxim (Gruppe II Cephalosporin); Dosierung abhängig von OP-Dauer und Gewicht",
+   "Penicillin G; immer wirksam",
+   "Nur bei Infektionen",
+   "Keine Prophylaxe erforderlich",
+   "Aminoglykosid-Monotherapie"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 83,
+  "text": "Antiseptika — Wechselwirkung Octenisept + Jod-haltig?",
+  "options": [
+   "Chemische Inaktivierung möglich; Zeitabstand erforderlich; ggf. präoperativ vermeiden",
+   "Keine Wechselwirkung",
+   "Synergistische Wirkung",
+   "Immer kombinierbar",
+   "Nur Octenisept ist wirksam"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 84,
+  "text": "MRSA-Prävention — Screening und Sanierung?",
+  "options": [
+   "Nasales Screening + Sanierung mit Mupirocin; Screening alle 48–72h im Krankenhaus",
+   "Keine Prävention möglich",
+   "Nur antibiotisch behandeln",
+   "Screening nicht erforderlich",
+   "Dauersanierung ohne Screening"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 85,
+  "text": "Nosokomiale Infektionen — Häufigste Erreger und Quellen?",
+  "options": [
+   "Staphylococcus aureus, E. coli, Pseudomonas, Candida; Quellen: Hände, Luft, Kontamination",
+   "Nur Viren",
+   "Nur Pilze",
+   "Keine Prävention",
+   "Spontane Entstehung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 86,
+  "text": "Händehygiene — Compliance-Problem und Lösungsansätze?",
+  "options": [
+   "Compliance oft <50%; Lösungen: Schulung, alkoholische Desinfektionsmittel-Spender, Kultur-Wandel",
+   "Compliance über 90%",
+   "Keine Schulung erforderlich",
+   "Nur Wasser und Seife",
+   "Handschuhe ersetzen Handhygiene"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 87,
+  "text": "OP-Kleidung und Barriereprinzipien — Schutz vor Kontamination?",
+  "options": [
+   "Multi-Layer; Wasserdicht; Blutfestigkeit; Sterilität; regelmäßiger Wechsel",
+   "Ein einzelner Stoff ausreichend",
+   "Keine Sterilität erforderlich",
+   "Wiederverwendung ohne Sterilisation",
+   "Keine Bedeutung für Infektionsprävention"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 88,
+  "text": "OP-Saal-Luftfilterung und Raumklima — Ziele?",
+  "options": [
+   "HEPA-Filter; 15–25 Luftwechsel/h; positive Druckdifferenz; Temperatur 18–21°C; Luftfeuchte 45–65%",
+   "Minimal-Standard",
+   "Keine speziellen Anforderungen",
+   "Externe Luft ohne Filter",
+   "Beliebiges Klima"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 89,
+  "text": "Bluttransfusion — Serologie und ABO-Bedside-Test?",
+  "options": [
+   "Forward + Reverse Blutgruppenbestimmung; ABO Bedside-Test mit Patientenserum + Testzellen (A, B, O); Reaktion 2–3 min",
+   "Nur Forward-Test erforderlich",
+   "Keine Bedside-Kontrolle",
+   "Serum nicht erforderlich",
+   "Zeitaufwand >10 min"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 90,
+  "text": "Bluttransfusion — Transfusionszwischenfall-Symptome?",
+  "options": [
+   "Fieber >1°C, Kopfschmerz, Rückenschmerz, Dyspnoe, Tachykardie, Hypotonie, Hämoglobinurie",
+   "Keine Symptome möglich",
+   "Nur Juckreiz",
+   "Nur Übelkeit",
+   "Keine klinischen Zeichen"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 91,
+  "text": "Bluttransfusion — Faustregel für EK-Transfusion (Erwachsene)?",
+  "options": [
+   "1 EK hebt Hb um ~1 g/dL bei ~70 kg Körpergewicht",
+   "1 EK hebt Hb um 3 g/dL",
+   "Keine Vorhersage möglich",
+   "1 EK nur bei Blutung effektiv",
+   "Hb-Anstieg hängt nicht vom Volumen ab"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 92,
+  "text": "Nierenphysiologie — Glomeruläre Filtration und Clearance?",
+  "options": [
+   "GFR ~120 mL/min (gesund); Renal Clearance: C = (U·V)/P; Kreatinin-Clearance ~90–120 mL/min",
+   "GFR ~60 mL/min",
+   "GFR nicht messbar",
+   "Creatinin-Clearance = Blutdruck-abhängig",
+   "Keine Clearance-Methode verfügbar"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 93,
+  "text": "Akutes Nierenversagen (ANV) / AKI — Stadium nach RIFLE?",
+  "options": [
+   "Risk (↑Krea ×1,5), Injury (↑Krea ×2), Failure (↑Krea ×3 + Urin <0,5 mL/kg/h >8h), Loss, ESRD",
+   "Nur klinisch diagnostizierbar",
+   "Keine Stadieneinteilung",
+   "Nur anhand von Urinausscheidung",
+   "Kein messbares Kriterium"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 94,
+  "text": "Nierenersatzverfahren — Indikationen?",
+  "options": [
+   "Kaliämie >6,5 mEq/L, Urämie (Urea >300 mg/dL), Überwässerung, refraktäre Azidose, Ammoniakzirkulation",
+   "Nur bei kompletter Oligurie",
+   "Keine Indikationen",
+   "Nur prophylaktisch",
+   "Nur nach Dialyse"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 95,
+  "text": "Akute Tubulusnekrose (ATN) — Ursachen und Verlauf?",
+  "options": [
+   "Ischämisch (Schock) oder Nephrotoxisch (Kontrastmittel); 30–50% Mortalität; Oligurische Phase ~10–14 Tage",
+   "Immer nicht-oliguarisch",
+   "Keine Mortalität",
+   "Irreversibel",
+   "Spontane Heilung möglich"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 96,
+  "text": "Akute Glomerulonephritis — Post-infektiös, ANCA-assoziiert?",
+  "options": [
+   "Post-infektiös (Streptokokken); ANCA (GPA, MPA, EGPA); Lupus-Nephritis; Membranoproliferativ",
+   "Nur eine Ursache möglich",
+   "Immer reversibel",
+   "Keine Dialyse erforderlich",
+   "Keine Behandlung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 97,
+  "text": "CKD (Chronic Kidney Disease) — Stadium 3a nach KDIGO?",
+  "options": [
+   "GFR 45–59 mL/min/1,73 m²; Eiweißausscheidung <0,5 g/24h",
+   "GFR >90",
+   "GFR <15",
+   "Nur Eiweißurie",
+   "Keine Stadiengraduierung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 98,
+  "text": "Elektrolyt-Störungen bei Nierenversagen — Sekundäre Hyperparathyreoidismus?",
+  "options": [
+   "↓Calcium + ↑Phosphat → ↑PTH; Vitamin D Aktivierung ↓ (Niere)",
+   "Nur ↑Calcium",
+   "Nur ↓Phosphat",
+   "PTH-Suppresssion",
+   "Keine Störung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 99,
+  "text": "Peridurale Analgesie — Kontraindikationen?",
+  "options": [
+   "Thrombozytopenie <50.000, Antikoagulation, Patientenablehnung, Infektion an Punktionsstelle, neurologische Erkrankung",
+   "Keine Kontraindikationen",
+   "Nur bei Sepsis",
+   "Nur bei Bluthochdruck",
+   "Immer möglich"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 100,
+  "text": "Epidurale LA-Toxizität — Zeichen und Behandlung?",
+  "options": [
+   "Perioral-Parästhesien, Metallgeschmack, Tinnitus, Verwirrtheit, Krampfanfälle, Koma; Lipid-Rescue 20%",
+   "Nur Übelkeit",
+   "Kein Notfall",
+   "Adrenalin-Bolus",
+   "Spontane Genesung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 101,
+  "text": "Pentobarbital und Phenobarbital — Unterschiede?",
+  "options": [
+   "Pentobarbital: kurzwirksam; Phenobarbital: langwirksam; Phenobarbital für Langzeit-Anfallsprophylaxe",
+   "Identische Wirkung",
+   "Keine Unterschiede",
+   "Nur Pentobarbital wirksam",
+   "Phenobarbital oral nur"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 102,
+  "text": "Propofol-Infusionssyndrom — Risikofaktoren?",
+  "options": [
+   "Hohe Dosis (>5 mg/kg/h), lange Dauer (>48h), kritische Krankheit, Sepsis, Hypokalämie",
+   "Keine bekannten Risiken",
+   "Nur Übergewicht",
+   "Nur bei Kindern",
+   "Zufällige Komplikation"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 103,
+  "text": "Propofol-Infusionssyndrom — Klinisches Bild?",
+  "options": [
+   "Bradykardie, Hypotonie, Metabolische Azidose, Hyperkalämie, Myoglobinurie, Rhabdomyolyse",
+   "Nur Tachykardie",
+   "Nur Hypertonie",
+   "Keine Symptome",
+   "Spontane Heilung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 104,
+  "text": "Ketamin vs. Esketamin — Unterschied in der Enantiomerenselektivität?",
+  "options": [
+   "Ketamin: Racemat (50:50); Esketamin: S-(+)-Enantiomer; Esketamin ~3× potenter und schneller wirksam",
+   "Identisch",
+   "Ketamin potenter",
+   "Keine Unterschiede",
+   "Esketamin ist ein Metabolit"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 105,
+  "text": "Benzodiazepine vs. Barbiturat — GABA-A-Modulationsmechanismus Unterschied?",
+  "options": [
+   "Benzodiazepine: positive allosterische Modulation (↑ Öffnungshäufigkeit); Barbiturate: ↑ Dauer der Cl⁻-Kanal-Öffnung",
+   "Identischer Mechanismus",
+   "Barbiturat nur postsynaptisch",
+   "Benzodiazepine hemmen GABA",
+   "Kein Unterschied im Wirkmechanismus"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 106,
+  "text": "Succinylcholin — Apnoe und genetische Varianten?",
+  "options": [
+   "Plasma-Cholinesterase-Mangel (atypische Varianten); Prolongierte Apnoe; genetisches Screening erforderlich bei Familie",
+   "Keine genetischen Varianten",
+   "Immer rapid metabolisiert",
+   "Kein Screening nötig",
+   "Nur erworbener Mangel"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 107,
+  "text": "Rocuronium vs. Succinylcholin — Vergleich Onset und Dauer?",
+  "options": [
+   "Rocuronium: 60–90 sec (RSI 1,2mg/kg schneller); Succinylcholin: 30–60 sec; Rocuronium länger wirksam",
+   "Rocuronium schneller",
+   "Succinylcholin länger",
+   "Beide identisch",
+   "Kein Unterschied"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 108,
+  "text": "Neostigmin vs. Sugammadex — Vergleich Wirkungseintritt und -typ?",
+  "options": [
+   "Neostigmin: 3–5 min langsamer, indirekt (Acetylcholinesterase-Hemmung); Sugammadex: sofort, direkt (Entzündung des MR)",
+   "Identisch",
+   "Sugammadex langsamer",
+   "Neostigmin schneller",
+   "Kein mechanistischer Unterschied"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 109,
+  "text": "Cisatracurium vs. Atracurium — Unterschied in der Abbaukinetik?",
+  "options": [
+   "Beides: Hofmann + ester-Hydrolyse; Cisatracurium: schneller, keine Laudanosine-Nebenprodukte, neuromuskular wirksamer",
+   "Identisch",
+   "Atracurium schneller",
+   "Unterschiedliche Elimination",
+   "Keine Unterschiede"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 110,
+  "text": "Morphin vs. Fentanyl vs. Remifentanil — Kontextsensitive Halbwertszeiten nach 8h Infusion?",
+  "options": [
+   "Morphin: >1000 min; Fentanyl: ~400 min; Remifentanil: ~15 min",
+   "Identische CSHT",
+   "Remifentanil längst",
+   "Morphin kürzest",
+   "Keine Unterschiede"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 111,
+  "text": "Tramadol — Mechanismus dual?",
+  "options": [
+   "Schwacher µ-Agonist + Monoamin-Reuptake-Inhibitor (Serotonin/Noradrenalin)",
+   "Nur µ-Agonist",
+   "Nur SSRI",
+   "Antiemetikum",
+   "Muskelrelaxans"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 112,
+  "text": "Doxapram — Atemmittel bei Atemdepression?",
+  "options": [
+   "Respiratorischer Stimulant; peridurale Remifentanil-Apnoe-Antagonist (Glycin-Effekt)",
+   "Muskelrelaxans-Antagonist",
+   "Opioid-Agonist",
+   "Nur sedativ",
+   "Keine Wirkung auf Atmung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 113,
+  "text": "Adrenalin-Epinephrin — i.m. Dosis bei Anaphylaxie und zeitlicher Repeat?",
+  "options": [
+   "0,3–0,5 mg (adult) i.m.; Repeat nach 5–15 min möglich",
+   "Nur i.v.",
+   "0,1 mg ausreichend",
+   "Keine Wiederholung",
+   "Maximale Einzeldosis 1 mg"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 114,
+  "text": "Phenylephrin vs. Noradrenalin — Selektivität und Einsatz?",
+  "options": [
+   "Phenylephrin: reiner α1; Noradrenalin: α1 > β1; Noradrenalin Erste Wahl bei Sepsis",
+   "Identische Wirkung",
+   "Phenylephrin besser für Herz",
+   "Noradrenalin nur α2",
+   "Kein Unterschied in Einsatz"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 115,
+  "text": "Dopamin-Dosierungsabhängigkeit — Rezeptoren?",
+  "options": [
+   "Niedrig: D1 (Niere ↑), D2 (Splanchnik); Mittel: β1 (Herz); Höher: α1 (Vasokonstriktion)",
+   "Konstant auf allen Rezeptoren",
+   "Nur β-Wirkung",
+   "Nur α-Wirkung bei hoher Dosis",
+   "Keine Dosisabhängigkeit"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 116,
+  "text": "Milrinone — Nicht-katecholaminergischer Inotrope?",
+  "options": [
+   "Phosphodiesterase-3-Inhibitor; positive Inotropie + Lusitropia (relaxation) ohne β-Stimulation",
+   "β1-Agonist",
+   "α1-Agonist",
+   "Muskelrelaxans",
+   "Sedierungsmittel"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 117,
+  "text": "Labetalol — gemischter α/β-Blocker — Merkmale?",
+  "options": [
+   "α1-Blockade + non-selektive β-Blockade; Ratio ~1:7 (β > α); antihypertensiv ohne Reflex-Tachykardie",
+   "Nur β-Blocker",
+   "Nur α-Blocker",
+   "Keine selektive Blockade",
+   "Keine Antihypertensiva"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 118,
+  "text": "Esmolol — schneller β1-Blocker — Einsatz SVT?",
+  "options": [
+   "Bolus 500 µg/kg/min über 1 min; Erhaltung 50–200 µg/kg/min; sehr schnelle Halbwertszeit",
+   "Langsame Wirkung",
+   "Nur längerfristig",
+   "Keine Bolus-Form",
+   "Dauerhaft infundiert"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 119,
+  "text": "ACE-Hemmer vs. ARB — Mechanismus und Unterschied?",
+  "options": [
+   "ACE-Hemmer: ↓ Umwandlung Angiotensin I → II; ARB: ↓ Bindung von Ang II an AT1; beide Zielorganhypertrophie ↓",
+   "Identische Mechanismen",
+   "ACE-Hemmer nur peridurale",
+   "ARB ohne Wirkung",
+   "Keine Unterschiede"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 120,
+  "text": "Antiarrhythmika Klasse I — Unterschied Ia, Ib, Ic?",
+  "options": [
+   "Ia: Na-Kanal ↓ + K-Kanal ↓ (QT ↑); Ib: Na-Kanal ↓ + K-Kanal ↑; Ic: maximale Na-Kanal-Blockade",
+   "Identisch",
+   "Nur Ia wirksam",
+   "Keine Unterschiede",
+   "Klasse nicht relevant"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 121,
+  "text": "Amiodaron — multi-Klassen-Antiarrhythmikum — Wirkmechanismus?",
+  "options": [
+   "Klasse I (Na ↓) + II (β-Block) + III (K ↓, QT ↑) + IV (Ca-Kanal); Schilddrüsen-Effekte",
+   "Nur Klasse II",
+   "Nur Klasse IV",
+   "Keine multi-Klassen-Effekte",
+   "Nur antiarrhythmisch"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 122,
+  "text": "Dextran — HES (Hydroxyethylstärke) — Unterschied in Molekulargewicht und Einsatz?",
+  "options": [
+   "Dextran: 40.000–70.000 Da; HES 130/0,4: 130.000 Da, besseres Profil; Dextran: ALI-Risiko höher",
+   "Identisch",
+   "HES-Allergie-Risiko höher",
+   "Dextran immer besser",
+   "Keine Unterschiede"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 123,
+  "text": "Albumin 20% — Einsatz bei kritischen Patienten?",
+  "options": [
+   "Large-Volume-Paracentese, spontan-bakterielle Peritonitis (SBP), Sepsis (umstritten, kein Survivalvorteil)",
+   "Routine-Volumenersatz",
+   "Blutung",
+   "Dehydration p.o.",
+   "Profylaxe"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 124,
+  "text": "Gelatinetränke (Gelafundin) — Osmotik und Allergie-Risiko?",
+  "options": [
+   "Kolloid; moderate osmotische Wirkung; Allergie-Risiko niedrig; Niereneffekte gering",
+   "Kristalloid",
+   "Kein osmotischer Effekt",
+   "Hohes Allergie-Risiko",
+   "Immun-Aktivierung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 125,
+  "text": "Fresh Frozen Plasma (FFP) — Indikationen und Dosierung?",
+  "options": [
+   "Coagulopathie mit Blutung; Multi-Faktor-Mangelzustände; 10–15 mL/kg pro Dosis",
+   "Routine-Blutung",
+   "Nur bei niedrigem Hb",
+   "Keine klinische Indikation",
+   "Standard-Transfusion"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 126,
+  "text": "Thrombozythenkonzentrat — Trigger-Schwelle perioperativ?",
+  "options": [
+   "Blutung: <50.000/µL; prophylaktisch: <20.000/µL; aktive OP-Blutung: <100.000/µL",
+   "Immer <10.000/µL",
+   "Keine Triggers erforderlich",
+   "Nur prophylaktisch ab <30.000",
+   "Keine Schwelle-Empfehlungen"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 127,
+  "text": "Tranexamsäure (TXA) — Mechanismus und Einsatz Periop?",
+  "options": [
+   "Antifibrinolytikum (Plasmin-Inhibitor); ↓ Blutung um ~30%; Thrombose-Risiko ↑ (kontroverses Profil)",
+   "Antikoagulans",
+   "Blutverdünner",
+   "Nur gegen Thrombose",
+   "Keine perioperative Rolle"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 128,
+  "text": "Vitamin K (Phytonadion) — Einsatz und Timing bei Coumarinüberdosierung?",
+  "options": [
+   "2,5–5 mg p.o./i.v.; Wirkung 12–24h; bei Blutung: Frisch-Plasma sofort + Vitamin K",
+   "Schnelle Wirkung <30 min",
+   "Nur intramuskulär",
+   "Keine Wirkung bei INR ↑",
+   "Kontraindiziert bei Blutung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 129,
+  "text": "Katecholamin-Kardiomyopathie — Mechanism bei Hochdosis-Adrenalin/-Noradrenalin?",
+  "options": [
+   "Hyperaktivation β1 → MyoKard-Nekrose durch Kalzium-Überladung; Lymphozyten-Infiltration möglich",
+   "Nur chronische Erkrankung",
+   "Keine klinische Relevanz",
+   "Nur bei Morphin",
+   "Nicht bekannt"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 130,
+  "text": "Serotonin-Syndrom — Auslöser (SSRI + MAOI) und Symptome?",
+  "options": [
+   "Auslöser: SSRI/SNRI + MAOI; Symptome: Tremor, Hyperthermie, Muskelrigidität, Autonome Instabilität, ggf. Krampfanfälle",
+   "Nur Fieber",
+   "Keine Symptome",
+   "Nur mit Opioiden",
+   "Nicht klinisch relevant"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 131,
+  "text": "Maligne Hyperthermie (MH) — Trigger und Genetik?",
+  "options": [
+   "Trigger: Volatile (Sevo, Des, Isofl) + Succinylcholin; autosomal-dominant; RYR1/CACNA1S",
+   "Nur Spontan",
+   "Keine genetischen Ursachen",
+   "Alle Anästhetika auslösend",
+   "Nur Succinylcholin"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 132,
+  "text": "Maligne Hyperthermie — Notfall-Management und Dantrolene?",
+  "options": [
+   "Stopp Anästhetika; 100% O₂; Hyperventilation; Kühlung; Dantrolene 2,5 mg/kg IV rapid; Monitor K+, CK; Urinausscheidung↑",
+   "Nur supportiv",
+   "Keine spezifische Therapie",
+   "Nur Kühlung",
+   "Dantrolene oral"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 133,
+  "text": "Anticholinergika (Atropin) — Kontraindikation und Einsatz?",
+  "options": [
+   "Nicht mit Neostigmin kombiniert (Überaktivierung); selektiv bei Bradykardie/Bronchokonstriktion/Speichel-Sekretion ↑",
+   "Immer mit Neostigmin",
+   "Keine Kontraindikationen",
+   "Routine-Einsatz",
+   "Keine Wirkung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 134,
+  "text": "Glycopyrrolat (Robinul) — Vorteil gegenüber Atropin?",
+  "options": [
+   "Quaternäre Ammoniumverbindung (hydrophil); penetriert nicht BBB → kein ZNS-Effekt; längere Dauer",
+   "Identisch mit Atropin",
+   "Schneller wirksam",
+   "Nur zentral wirksam",
+   "Keine Vorteile"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 135,
+  "text": "Antihistamin (H1-Antagonist) — Einsatz bei Anaphylaxie?",
+  "options": [
+   "Sekundär nach Adrenalin + IV-Zugang; typischerweise Diphenhydramin 25–50 mg i.v.",
+   "Erste Wahl",
+   "Kontraindiziert",
+   "Keine Indikation",
+   "Nur prophylaktisch"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 136,
+  "text": "H2-Rezeptor-Antagonist (Ranitidin) — Einsatz bei Anaphylaxie/Prämedikation?",
+  "options": [
+   "Magenschutz bei Aspirationsprophylaxe; sekundär bei Anaphylaxie; 50 mg i.v.",
+   "Primäre Anaphylaxie-Behandlung",
+   "Keine Rolle",
+   "Kontraindiziert",
+   "Nur prophylaktisch"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 137,
+  "text": "Corticosteroid bei Anaphylaxie — Timing und Dosis?",
+  "options": [
+   "Methylprednisolon 250–500 mg i.v. oder Hydrocortison 100–200 mg i.v.; sekundär nach Adrenalin, nicht primary",
+   "Erste Wahl",
+   "Keine Indikation",
+   "Nur p.o.",
+   "Schnelle Wirkung erwartet"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 138,
+  "text": "Salbutamol bei anaphylaktischem Bronchospasmus?",
+  "options": [
+   "β2-Agonist; 100 µg Metered-Dose-Inhaler bei Bronchokonstruktion; Adrenalin hat Vorrang",
+   "Erste Wahl",
+   "Keine Wirkung",
+   "Kontraindiziert",
+   "Nur prophylaktisch"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 139,
+  "text": "Metoclopramid — Antiemesis durch welchen Mechanismus?",
+  "options": [
+   "D2-Antagonismus (zentral); periphere Pro-Kinetik-Effekte (Pylorus-Relaxation)",
+   "5-HT3-Agonist",
+   "Histamin-Blockade",
+   "GABA-Aktivierung",
+   "Keine antiemetische Wirkung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 140,
+  "text": "Betahistin — Einsatz bei Benommenheit/Schwindel?",
+  "options": [
+   "H1/H3-Antagonist (regional); Equilibrium + Mikrozirkulation ↑; Menière-Syndrom",
+   "Antihistamin",
+   "Antiemetikum",
+   "Keine spezialisierte Indikation",
+   "Kontraindiziert"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 141,
+  "text": "Muskarinischer Antagonist (Scopolamin) — periphere Effekte?",
+  "options": [
+   "Speichel-Sekretion ↓, Schweiß ↓, Pupillen-Dilatation, Akkommodation ↑, HR ↑ (höher), Bronchodilatation",
+   "Nur Mydriasis",
+   "Salivation ↑",
+   "Bradykardie",
+   "Bronchokonstruktion"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 142,
+  "text": "Nitroglycerin bei akutem Koronarsyndrom — Dosierung und Kontraindikation?",
+  "options": [
+   "Sublingual 0,6 mg oder Spray; Kontraindikation: gleichzeitige Phosphodiesterase-5-Inhibitoren (extreme Hypotonie)",
+   "Nur i.v.",
+   "Keine Kontraindikationen",
+   "Mit Sildenafil kombinierbar",
+   "Nicht wirksam"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 143,
+  "text": "Aspirin — Wirkmechanismus als Antiplatelet-Agent?",
+  "options": [
+   "Irreversible Cox-1-Inhibition → ↓ TXA2-Synthese → Aggregation ↓; Dauer ~7–10 Tage",
+   "Reversible Blockade",
+   "Antikoagulant",
+   "Kurze Wirkdauer <1h",
+   "Keine Antiplatelet-Wirkung"
+  ],
+  "answer": "A"
+ },
+ {
+  "num": 144,
+  "text": "Clopidogrel (Plavix) — Aktive Metabolisierung und Kontraindikation?",
+  "options": [
+   "Prodrug, aktiviert durch CYP2C19; genetische Varianten ↓ Wirksamkeit; PPI-Coadministration ↓ Effekt",
+   "Aktiver Wirkstoff",
+   "Keine genetischen Effekte",
+   "Mit PPI sicher kombinierbar",
+   "Keine Wechselwirkungen"
+  ],
+  "answer": "A"
+ }
+];
 
-        let allQuestions = QUIZ_DATA;
-        let currentQuestions = [];
-        let currentIndex = 0;
-        let answered = {};
-        let currentMode = 'all';
-        let shuffle = false;
-        let answered_count = 0;
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+        let answers = [];
 
-        function setMode(mode) {
-            currentMode = mode;
-            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
         }
 
-        function toggleShuffle() {
-            shuffle = document.getElementById('shuffleCheck').checked;
-        }
-
-        function startQuiz() {
-            let filtered = allQuestions;
-            if (currentMode === 'exam') filtered = allQuestions.filter(q => q.num <= 144);
-            else if (currentMode === 'mechanisms') filtered = allQuestions.filter(q => q.num >= 201);
+        function loadQuestion() {
+            answered = false;
+            const question = allQuestions[currentQuestionIndex];
             
-            if (shuffle) filtered = [...filtered].sort(() => Math.random() - 0.5);
+            document.getElementById('questionNumber').textContent = `Frage ${currentQuestionIndex + 1}`;
+            document.getElementById('questionText').textContent = question.text;
+            document.getElementById('resultMessage').classList.remove('show', 'correct', 'incorrect');
+            document.getElementById('submitBtn').style.display = 'block';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('submitBtn').disabled = false;
             
-            currentQuestions = filtered;
-            currentIndex = 0;
-            answered = {};
-            answered_count = 0;
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
             
-            document.getElementById('startScreen').style.display = 'none';
-            document.getElementById('quizScreen').classList.add('active');
-            document.getElementById('totalQuestions').textContent = currentQuestions.length;
-            
-            showQuestion();
-        }
-
-        function showQuestion() {
-            const q = currentQuestions[currentIndex];
-            document.getElementById('currentQuestionNum').textContent = currentIndex + 1;
-            document.getElementById('questionLabel').textContent = `Q${q.num}`;
-            document.getElementById('questionText').textContent = q.text;
-            
-            const container = document.getElementById('optionsContainer');
-            container.innerHTML = '';
-            
-            q.options.forEach((opt, idx) => {
-                const label = String.fromCharCode(65 + idx);
-                const btn = document.createElement('button');
-                btn.className = 'option';
-                btn.textContent = label + ') ' + opt;
-                btn.onclick = () => selectAnswer(idx, label);
-                container.appendChild(btn);
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.innerHTML = `
+                    <input type="radio" id="option${index}" name="answer" value="${String.fromCharCode(65 + index)}">
+                    <label for="option${index}">${option}</label>
+                `;
+                optionsContainer.appendChild(optionDiv);
             });
             
-            document.getElementById('nextBtn').classList.remove('show');
-            document.getElementById('feedback').classList.remove('show');
+            updateProgress();
         }
 
-        function selectAnswer(idx, label) {
-            const q = currentQuestions[currentIndex];
-            const isCorrect = label === q.answer;
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / allQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Frage ${currentQuestionIndex + 1} von ${allQuestions.length}`;
+        }
+
+        function checkAnswer() {
+            const question = allQuestions[currentQuestionIndex];
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
             
-            if (!answered[currentIndex]) {
-                answered[currentIndex] = isCorrect;
-                answered_count++;
+            if (!selectedOption) {
+                alert('Bitte wähle eine Antwort!');
+                return;
             }
             
-            document.querySelectorAll('.option').forEach((btn, i) => {
-                btn.classList.add('answered');
-                if (i === idx) {
-                    btn.classList.add('selected');
-                    if (isCorrect) btn.classList.add('correct');
-                    else btn.classList.add('incorrect');
-                } else if (String.fromCharCode(65 + i) === q.answer) {
-                    btn.classList.add('correct');
-                }
-            });
+            answered = true;
+            const userAnswer = selectedOption.value;
+            const isCorrect = userAnswer === question.answer;
             
-            const feedback = document.getElementById('feedback');
-            feedback.classList.add('show');
             if (isCorrect) {
-                feedback.textContent = '✅ Richtig!';
-                feedback.classList.add('correct');
-                feedback.classList.remove('incorrect');
-            } else {
-                feedback.textContent = `❌ Falsch! Richtig: ${q.answer}`;
-                feedback.classList.add('incorrect');
-                feedback.classList.remove('correct');
+                score++;
             }
             
-            updateScore();
-            document.getElementById('nextBtn').classList.add('show');
-        }
-
-        function updateScore() {
-            const correct = Object.values(answered).filter(v => v).length;
-            const total = Object.keys(answered).length;
-            const percentage = total > 0 ? Math.round((correct / total) * 100) : 0;
+            answers.push({
+                question: currentQuestionIndex,
+                selected: userAnswer,
+                correct: question.answer,
+                isCorrect: isCorrect
+            });
             
-            document.getElementById('percentageScore').textContent = percentage + '%';
-            document.getElementById('correctCount').textContent = correct;
-            document.getElementById('totalCount').textContent = total;
-            document.getElementById('progressBar').style.width = ((currentIndex + 1) / currentQuestions.length * 100) + '%';
+            // Zeige Feedback
+            const resultMessage = document.getElementById('resultMessage');
+            resultMessage.classList.add('show');
+            resultMessage.textContent = isCorrect ? '✓ Richtig!' : '✗ Falsch!';
+            resultMessage.classList.add(isCorrect ? 'correct' : 'incorrect');
+            
+            // Markiere die Optionen
+            const options = document.querySelectorAll('.option');
+            options.forEach((option, index) => {
+                const radio = option.querySelector('input[type="radio"]');
+                if (radio.value === question.answer) {
+                    option.classList.add('correct');
+                }
+                if (radio.value === userAnswer && !isCorrect) {
+                    option.classList.add('incorrect');
+                }
+                radio.disabled = true;
+            });
+            
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'block';
         }
 
         function nextQuestion() {
-            currentIndex++;
-            if (currentIndex < currentQuestions.length) {
-                showQuestion();
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < allQuestions.length) {
+                loadQuestion();
             } else {
-                showResults();
+                showEndScreen();
             }
         }
 
-        function showResults() {
-            document.getElementById('quizScreen').classList.remove('active');
-            document.getElementById('resultsScreen').classList.add('active');
+        function showEndScreen() {
+            document.getElementById('questionContainer').style.display = 'none';
+            document.getElementById('endScreen').classList.add('show');
             
-            const correct = Object.values(answered).filter(v => v).length;
-            const total = Object.keys(answered).length;
-            const percentage = total > 0 ? Math.round((correct / total) * 100) : 0;
+            const percentage = Math.round((score / allQuestions.length) * 100);
+            document.getElementById('finalScore').textContent = `${percentage}%`;
+            document.getElementById('correctCount').textContent = score;
+            document.getElementById('incorrectCount').textContent = allQuestions.length - score;
             
-            document.getElementById('finalScore').textContent = percentage + '%';
-            document.getElementById('resultCorrect').textContent = `${correct} von ${total} richtig`;
-            
-            let grade = '';
-            let gradeClass = '';
-            if (percentage >= 80) {
-                grade = '✅ Sehr gut!';
-                gradeClass = 'result-excellent';
+            let scoreText = '';
+            if (percentage >= 90) {
+                scoreText = 'Ausgezeichnet! 🌟 Du bist bestens vorbereitet!';
+            } else if (percentage >= 75) {
+                scoreText = 'Sehr gut! 👍 Noch ein wenig wiederholen!';
             } else if (percentage >= 60) {
-                grade = '⚠️ Bestanden!';
-                gradeClass = 'result-good';
+                scoreText = 'Gut! 💪 Noch etwas üben empfohlen!';
             } else {
-                grade = '❌ Nochmal üben!';
-                gradeClass = 'result-retry';
+                scoreText = 'Noch Luft nach oben! 📚 Weiter geht\'s!';
             }
+            document.getElementById('scoreText').textContent = scoreText;
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            answered = false;
+            answers = [];
             
-            const gradeEl = document.getElementById('resultGrade');
-            gradeEl.textContent = grade;
-            gradeEl.className = 'result-grade ' + gradeClass;
+            document.getElementById('questionContainer').classList.add('active');
+            document.getElementById('endScreen').classList.remove('show');
+            
+            loadQuestion();
         }
 
-        function restart() {
-            document.getElementById('resultsScreen').classList.remove('active');
-            document.getElementById('startScreen').style.display = 'block';
-            document.getElementById('shuffleCheck').checked = false;
-            shuffle = false;
-        }
-
-        function shareResult() {
-            const correct = Object.values(answered).filter(v => v).length;
-            const total = Object.keys(answered).length;
-            const percentage = total > 0 ? Math.round((correct / total) * 100) : 0;
-            const text = `Pharmakologie Quiz: ${percentage}% (${correct}/${total} richtig)`;
-            navigator.clipboard.writeText(text).then(() => alert('Ergebnis kopiert!'));
-        }
+        // Starte Quiz
+        loadQuestion();
     </script>
 </body>
 </html>
