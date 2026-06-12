@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmakologie Quiz - SAB AKH Wien</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a3a52 0%, #2d1b69 50%, #1a3a52 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container { max-width: 800px; width: 100%; background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); padding: 40px; }
+        .title { font-size: 32px; font-weight: bold; color: #1a3a52; margin-bottom: 10px; }
+        .subtitle { color: #666; margin-bottom: 30px; font-size: 14px; }
+        .mode-buttons { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .mode-btn { background: #f0f0f0; color: #333; }
+        .mode-btn.active { background: #1a3a52; color: white; }
+        .start-btn { background: #2d5a7b; color: white; width: 100%; padding: 16px; font-size: 18px; margin-top: 20px; }
+        .start-btn:hover { background: #1a3a52; }
+        .checkbox { margin: 20px 0; display: flex; align-items: center; gap: 10px; }
+        .checkbox input { width: 20px; height: 20px; cursor: pointer; }
+        .checkbox label { cursor: pointer; }
+        .info { background: #e8f4f8; padding: 15px; border-radius: 8px; border-left: 4px solid #2d5a7b; margin-bottom: 20px; }
+        .info-text { font-weight: 600; color: #1a3a52; }
+        .info-sub { font-size: 13px; color: #666; margin-top: 3px; }
+        
+        .quiz-container { display: none; }
+        .quiz-container.active { display: block; }
+        .progress { margin-bottom: 25px; }
+        .progress-text { font-size: 13px; color: #666; margin-bottom: 8px; }
+        .progress-bar { width: 100%; height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #2d5a7b; transition: width 0.3s; }
+        .score { float: right; text-align: right; }
+        .score-num { font-size: 24px; font-weight: bold; color: #2d5a7b; }
+        .score-text { font-size: 12px; color: #666; }
+        
+        .question { margin: 30px 0; }
+        .question-num { font-size: 13px; color: #999; margin-bottom: 10px; }
+        .question-text { font-size: 20px; font-weight: 600; color: #1a3a52; margin-bottom: 20px; }
+        
+        .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .option {
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: #f9f9f9;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .option:hover:not(.answered) { background: #f0f0f0; border-color: #2d5a7b; }
+        .option.selected { border-color: #2d5a7b; background: #e8f4f8; }
+        .option.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+        .option.incorrect { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+        .option.answered { cursor: default; }
+        
+        .feedback { padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none; }
+        .feedback.show { display: block; }
+        .feedback.correct { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+        .feedback.incorrect { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+        
+        .next-btn { background: #2d5a7b; color: white; width: 100%; padding: 14px; display: none; }
+        .next-btn.show { display: block; }
+        
+        .results { display: none; text-align: center; }
+        .results.active { display: block; }
+        .result-score { font-size: 60px; font-weight: bold; color: #2d5a7b; margin: 20px 0; }
+        .result-text { font-size: 24px; font-weight: 600; margin: 20px 0; }
+        .result-correct { font-size: 18px; color: #666; margin-bottom: 20px; }
+        .result-grade { font-size: 20px; font-weight: 600; margin: 20px 0; }
+        .result-excellent { color: #28a745; }
+        .result-good { color: #ffc107; }
+        .result-retry { color: #dc3545; }
+        
+        .button-group { display: flex; gap: 10px; margin-top: 30px; }
+        .button-group button { flex: 1; padding: 14px; }
+        .retry-btn { background: #2d5a7b; color: white; }
+        .share-btn { background: #6f42c1; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- START SCREEN -->
+        <div id="startScreen" class="start-screen">
+            <div class="title">Pharmakologie Quiz</div>
+            <div class="subtitle">SAB Anästhesiepflege AKH Wien</div>
+            
+            <div class="info">
+                <div class="info-text">📊 164 Fragen insgesamt</div>
+                <div class="info-sub">144 Exam-Fragen + 20 Mechanismen-Fragen</div>
+            </div>
+
+            <div>
+                <div style="font-weight: 600; margin-bottom: 10px;">Modus wählen:</div>
+                <div class="mode-buttons">
+                    <button class="mode-btn active" onclick="setMode('all')">Alle (164)</button>
+                    <button class="mode-btn" onclick="setMode('exam')">Exam (144)</button>
+                    <button class="mode-btn" onclick="setMode('mechanisms')">Mechanismen (20)</button>
+                </div>
+            </div>
+
+            <div class="checkbox">
+                <input type="checkbox" id="shuffleCheck" onchange="toggleShuffle()">
+                <label for="shuffleCheck">🔀 Fragen zufällig mischen</label>
+            </div>
+
+            <button class="start-btn" onclick="startQuiz()">Quiz starten 🚀</button>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div id="quizScreen" class="quiz-container">
+            <div class="progress">
+                <div class="progress-text">
+                    Frage <span id="currentQuestionNum">1</span> von <span id="totalQuestions">164</span>
+                    <div class="score">
+                        <div class="score-num" id="percentageScore">0%</div>
+                        <div class="score-text"><span id="correctCount">0</span>/<span id="totalCount">0</span> richtig</div>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-num" id="questionLabel"></div>
+                <div class="question-text" id="questionText"></div>
+            </div>
+
+            <div class="options" id="optionsContainer"></div>
+
+            <div class="feedback" id="feedback"></div>
+
+            <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Nächste →</button>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div id="resultsScreen" class="results">
+            <div class="title">Ergebnis</div>
+            <div class="result-score" id="finalScore">0%</div>
+            <div class="result-correct" id="resultCorrect">0 von 0 richtig</div>
+            <div class="result-grade" id="resultGrade"></div>
+            
+            <div class="button-group">
+                <button class="retry-btn" onclick="restart()">🔄 Nochmal</button>
+                <button class="share-btn" onclick="shareResult()">📤 Teilen</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const QUIZ_DATA = [
+            { num: 1, text: "Was bedeutet Pharmakodynamik?", options: ["Was die Pharmaka mit dem Körper machen", "Was der Körper mit den Pharmaka macht", "Wie sich die Pharmaka im Körper verteilen", "Wie sich die Pharmaka aus dem Körper eliminieren", "Wie der Körper die Pharmaka aufnimmt"], answer: "A" },
+            { num: 2, text: "Was gehört nicht zum ADME bei der Pharmakokinetik?", options: ["Absorption", "Ausscheidung", "Verteilung", "Resorption", "Metabolismus"], answer: "D" },
+            { num: 3, text: "Welches Organ ist hauptsächlich am First-Pass-Effekt beteiligt?", options: ["Leber", "Haut", "Darm", "Niere", "Magen"], answer: "A" },
+            { num: 4, text: "Propofol Induktionsdosis:", options: ["0,5–1 mg/kg", "1,5–2,5 mg/kg", "3–4 mg/kg", "5–6 mg/kg"], answer: "B" },
+            { num: 5, text: "Fentanyl ist gegenüber Morphin:", options: ["10× potenter", "50× potenter", "75–125× potenter", "weniger potent"], answer: "C" },
+            { num: 6, text: "Rocuronium RSI-Dosis:", options: ["0,3 mg/kg", "0,6 mg/kg", "1,2 mg/kg", "1,5 mg/kg"], answer: "C" },
+            { num: 7, text: "Succinylcholin ist:", options: ["nicht-depolarisierend", "depolarisierend", "kompetitiv reversibel", "mit Sugammadex antagonisierbar"], answer: "B" },
+            { num: 8, text: "Sugammadex sofort-Dosis:", options: ["2 mg/kg", "4 mg/kg", "8 mg/kg", "16 mg/kg"], answer: "D" },
+            { num: 201, text: "Was ist Affinität?", options: ["Wie schnell wirkt das Medikament", "Wie fest das Medikament an den Rezeptor bindet", "Wie viel Medikament man braucht", "Der maximale Effekt"], answer: "B" },
+            { num: 202, text: "Potency beschreibt:", options: ["Bindungsfestigkeit", "Wie viel Medikament man braucht für einen Effekt", "Wie lange es wirkt", "Der Maximaleffekt"], answer: "B" },
+        ];
+
+        let allQuestions = QUIZ_DATA;
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let answered = {};
+        let currentMode = 'all';
+        let shuffle = false;
+        let answered_count = 0;
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function toggleShuffle() {
+            shuffle = document.getElementById('shuffleCheck').checked;
+        }
+
+        function startQuiz() {
+            let filtered = allQuestions;
+            if (currentMode === 'exam') filtered = allQuestions.filter(q => q.num <= 144);
+            else if (currentMode === 'mechanisms') filtered = allQuestions.filter(q => q.num >= 201);
+            
+            if (shuffle) filtered = [...filtered].sort(() => Math.random() - 0.5);
+            
+            currentQuestions = filtered;
+            currentIndex = 0;
+            answered = {};
+            answered_count = 0;
+            
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('quizScreen').classList.add('active');
+            document.getElementById('totalQuestions').textContent = currentQuestions.length;
+            
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = currentQuestions[currentIndex];
+            document.getElementById('currentQuestionNum').textContent = currentIndex + 1;
+            document.getElementById('questionLabel').textContent = `Q${q.num}`;
+            document.getElementById('questionText').textContent = q.text;
+            
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+            
+            q.options.forEach((opt, idx) => {
+                const label = String.fromCharCode(65 + idx);
+                const btn = document.createElement('button');
+                btn.className = 'option';
+                btn.textContent = label + ') ' + opt;
+                btn.onclick = () => selectAnswer(idx, label);
+                container.appendChild(btn);
+            });
+            
+            document.getElementById('nextBtn').classList.remove('show');
+            document.getElementById('feedback').classList.remove('show');
+        }
+
+        function selectAnswer(idx, label) {
+            const q = currentQuestions[currentIndex];
+            const isCorrect = label === q.answer;
+            
+            if (!answered[currentIndex]) {
+                answered[currentIndex] = isCorrect;
+                answered_count++;
+            }
+            
+            document.querySelectorAll('.option').forEach((btn, i) => {
+                btn.classList.add('answered');
+                if (i === idx) {
+                    btn.classList.add('selected');
+                    if (isCorrect) btn.classList.add('correct');
+                    else btn.classList.add('incorrect');
+                } else if (String.fromCharCode(65 + i) === q.answer) {
+                    btn.classList.add('correct');
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            feedback.classList.add('show');
+            if (isCorrect) {
+                feedback.textContent = '✅ Richtig!';
+                feedback.classList.add('correct');
+                feedback.classList.remove('incorrect');
+            } else {
+                feedback.textContent = `❌ Falsch! Richtig: ${q.answer}`;
+                feedback.classList.add('incorrect');
+                feedback.classList.remove('correct');
+            }
+            
+            updateScore();
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        function updateScore() {
+            const correct = Object.values(answered).filter(v => v).length;
+            const total = Object.keys(answered).length;
+            const percentage = total > 0 ? Math.round((correct / total) * 100) : 0;
+            
+            document.getElementById('percentageScore').textContent = percentage + '%';
+            document.getElementById('correctCount').textContent = correct;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('progressBar').style.width = ((currentIndex + 1) / currentQuestions.length * 100) + '%';
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex < currentQuestions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quizScreen').classList.remove('active');
+            document.getElementById('resultsScreen').classList.add('active');
+            
+            const correct = Object.values(answered).filter(v => v).length;
+            const total = Object.keys(answered).length;
+            const percentage = total > 0 ? Math.round((correct / total) * 100) : 0;
+            
+            document.getElementById('finalScore').textContent = percentage + '%';
+            document.getElementById('resultCorrect').textContent = `${correct} von ${total} richtig`;
+            
+            let grade = '';
+            let gradeClass = '';
+            if (percentage >= 80) {
+                grade = '✅ Sehr gut!';
+                gradeClass = 'result-excellent';
+            } else if (percentage >= 60) {
+                grade = '⚠️ Bestanden!';
+                gradeClass = 'result-good';
+            } else {
+                grade = '❌ Nochmal üben!';
+                gradeClass = 'result-retry';
+            }
+            
+            const gradeEl = document.getElementById('resultGrade');
+            gradeEl.textContent = grade;
+            gradeEl.className = 'result-grade ' + gradeClass;
+        }
+
+        function restart() {
+            document.getElementById('resultsScreen').classList.remove('active');
+            document.getElementById('startScreen').style.display = 'block';
+            document.getElementById('shuffleCheck').checked = false;
+            shuffle = false;
+        }
+
+        function shareResult() {
+            const correct = Object.values(answered).filter(v => v).length;
+            const total = Object.keys(answered).length;
+            const percentage = total > 0 ? Math.round((correct / total) * 100) : 0;
+            const text = `Pharmakologie Quiz: ${percentage}% (${correct}/${total} richtig)`;
+            navigator.clipboard.writeText(text).then(() => alert('Ergebnis kopiert!'));
+        }
+    </script>
+</body>
+</html>
