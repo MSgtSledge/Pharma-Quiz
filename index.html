@@ -2078,15 +2078,27 @@
             document.getElementById('nextBtn').style.display = 'none';
             document.getElementById('submitBtn').disabled = false;
             
+            // Mische die Antworten zufällig
+            const optionsWithIndices = question.options.map((option, index) => ({
+                text: option,
+                originalIndex: String.fromCharCode(65 + index)
+            }));
+            
+            // Fisher-Yates Shuffle
+            for (let i = optionsWithIndices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optionsWithIndices[i], optionsWithIndices[j]] = [optionsWithIndices[j], optionsWithIndices[i]];
+            }
+            
             const optionsContainer = document.getElementById('optionsContainer');
             optionsContainer.innerHTML = '';
             
-            question.options.forEach((option, index) => {
+            optionsWithIndices.forEach((option, index) => {
                 const optionDiv = document.createElement('div');
                 optionDiv.className = 'option';
                 optionDiv.innerHTML = `
-                    <input type="radio" id="option${index}" name="answer" value="${String.fromCharCode(65 + index)}">
-                    <label for="option${index}">${option}</label>
+                    <input type="radio" id="option${index}" name="answer" value="${option.originalIndex}">
+                    <label for="option${index}">${option.text}</label>
                 `;
                 optionsContainer.appendChild(optionDiv);
             });
@@ -2185,13 +2197,24 @@
             answered = false;
             answers = [];
             
+            // Shuffel Fragen neu
+            shuffleQuestions();
+            
             document.getElementById('questionContainer').classList.add('active');
             document.getElementById('endScreen').classList.remove('show');
             
             loadQuestion();
         }
 
-        // Starte Quiz
+        function shuffleQuestions() {
+            for (let i = allQuestions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [allQuestions[i], allQuestions[j]] = [allQuestions[j], allQuestions[i]];
+            }
+        }
+
+        // Starte Quiz — Fragen shuffeln
+        shuffleQuestions();
         loadQuestion();
     </script>
 </body>
