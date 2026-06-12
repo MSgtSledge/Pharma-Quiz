@@ -1,1394 +1,388 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAB Anästhesiepflege Pharmakologie Quiz</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-        
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        
-        .content {
-            padding: 30px;
-        }
-        
-        .progress-bar {
-            height: 8px;
-            background: #e0e0e0;
-            border-radius: 4px;
-            margin-bottom: 30px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            transition: width 0.3s ease;
-            width: 0%;
-        }
-        
-        .question-counter {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .question-text {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-        
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 30px;
-        }
-        
-        .option {
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: white;
-        }
-        
-        .option:hover {
-            border-color: #667eea;
-            background: #f5f7ff;
-        }
-        
-        .option input[type="radio"] {
-            margin-right: 12px;
-            cursor: pointer;
-        }
-        
-        .option.selected {
-            border-color: #667eea;
-            background: #f5f7ff;
-        }
-        
-        .option.correct {
-            border-color: #4caf50;
-            background: #f1f8e9;
-        }
-        
-        .option.incorrect {
-            border-color: #f44336;
-            background: #ffebee;
-        }
-        
-        .button-group {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin-top: 30px;
-        }
-        
-        button {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-submit {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
-        }
-        
-        .btn-submit:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .btn-reset {
-            background: #757575;
-            color: white;
-        }
-        
-        .btn-reset:hover {
-            background: #616161;
-        }
-        
-        .feedback {
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 20px;
-            text-align: center;
-            font-weight: 500;
-            display: none;
-        }
-        
-        .feedback.show {
-            display: block;
-        }
-        
-        .feedback.correct {
-            background: #f1f8e9;
-            color: #2e7d32;
-            border: 1px solid #4caf50;
-        }
-        
-        .feedback.incorrect {
-            background: #ffebee;
-            color: #c62828;
-            border: 1px solid #f44336;
-        }
-        
-        .results {
-            display: none;
-            text-align: center;
-        }
-        
-        .results.show {
-            display: block;
-        }
-        
-        .results h2 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 20px;
-        }
-        
-        .score {
-            font-size: 48px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 20px 0;
-        }
-        
-        .score-text {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 30px;
-        }
-        
-        .category-filter {
-            margin-bottom: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-        }
-        
-        .category-btn {
-            padding: 8px 16px;
-            border: 2px solid #e0e0e0;
-            background: white;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-        
-        .category-btn:hover {
-            border-color: #667eea;
-            color: #667eea;
-        }
-        
-        .category-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: transparent;
-        }
-        
-        .navigation {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        
-        .nav-btn {
-            padding: 10px 20px;
-            background: #f0f0f0;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-btn:hover:not(:disabled) {
-            background: #e0e0e0;
-        }
-        
-        .nav-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pharmakologie – Prüfungsvorbereitung SAB Anästhesiepflege</title>
+<style>
+  :root{
+    --bg:#0f1419; --card:#1a2129; --card2:#212b35; --line:#2d3a47;
+    --txt:#e6edf3; --mut:#8b9aa8; --acc:#4dabf7; --acc2:#1c7ed6;
+    --ok:#2f9e44; --okbg:#143620; --okline:#2b6b3d;
+    --no:#e03131; --nobg:#3a1518; --noline:#7d2a2e;
+    --warn:#f59f00;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;padding-bottom:60px}
+  .wrap{max-width:760px;margin:0 auto;padding:16px}
+  header{position:sticky;top:0;z-index:20;background:rgba(15,20,25,.95);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .head-in{max-width:760px;margin:0 auto;padding:12px 16px;display:flex;
+    align-items:center;justify-content:space-between;gap:10px}
+  .brand{font-weight:700;font-size:15px}
+  .brand small{display:block;font-weight:400;color:var(--mut);font-size:11px}
+  .progressbar{height:4px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:2px}
+  .progressbar>div{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));width:0;transition:width .3s}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--mut);font-size:14px;margin-bottom:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
+  .mode-grid{display:grid;gap:14px}
+  @media(min-width:620px){.mode-grid{grid-template-columns:1fr 1fr}}
+  .mode{cursor:pointer;transition:transform .12s,border-color .12s;background:var(--card)}
+  .mode:hover{transform:translateY(-2px);border-color:var(--acc)}
+  .mode h3{margin:0 0 6px;font-size:17px}
+  .mode p{margin:0;color:var(--mut);font-size:13px}
+  .mode .ico{font-size:26px;margin-bottom:8px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    background:var(--acc2);color:#fff;border:none;border-radius:10px;
+    padding:12px 18px;font-size:15px;font-weight:600;cursor:pointer;transition:background .12s}
+  .btn:hover{background:var(--acc)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}
+  .btn.ghost:hover{border-color:var(--acc);background:var(--card2)}
+  .btn.sm{padding:8px 13px;font-size:13px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .spread{justify-content:space-between}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .chip{padding:7px 12px;border-radius:20px;border:1px solid var(--line);background:var(--card2);
+    color:var(--mut);font-size:13px;cursor:pointer;transition:all .12s}
+  .chip:hover{border-color:var(--acc)}
+  .chip.on{background:var(--acc2);border-color:var(--acc2);color:#fff}
+  .qmeta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:12px;color:var(--mut)}
+  .cat{background:var(--card2);border:1px solid var(--line);padding:3px 9px;border-radius:20px;font-size:11px;color:var(--acc)}
+  .qtext{font-size:18px;font-weight:600;margin:6px 0 16px;line-height:1.45}
+  .opts{display:flex;flex-direction:column;gap:10px}
+  .opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;
+    background:var(--card2);border:1.5px solid var(--line);border-radius:11px;
+    padding:13px 14px;color:var(--txt);font-size:15px;cursor:pointer;transition:all .12s;font-family:inherit}
+  .opt:hover:not(:disabled){border-color:var(--acc)}
+  .opt:disabled{cursor:default}
+  .opt .key{flex:0 0 26px;height:26px;border-radius:7px;background:var(--bg);
+    border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:13px;color:var(--mut)}
+  .opt.correct{background:var(--okbg);border-color:var(--okline)}
+  .opt.correct .key{background:var(--ok);border-color:var(--ok);color:#fff}
+  .opt.wrong{background:var(--nobg);border-color:var(--noline)}
+  .opt.wrong .key{background:var(--no);border-color:var(--no);color:#fff}
+  .opt.picked-exam{border-color:var(--acc);background:rgba(77,171,247,.08)}
+  .opt.picked-exam .key{background:var(--acc2);border-color:var(--acc2);color:#fff}
+  .opt .mark{margin-left:auto;font-size:18px;align-self:center}
+  .feedback{margin-top:14px;padding:11px 13px;border-radius:10px;font-size:14px;display:none}
+  .feedback.show{display:block}
+  .feedback.good{background:var(--okbg);border:1px solid var(--okline);color:#8ce99a}
+  .feedback.bad{background:var(--nobg);border:1px solid var(--noline);color:#ffa8a8}
+  .nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px}
+  .count{font-size:13px;color:var(--mut);text-align:center;margin-top:10px}
+  .stat{display:flex;gap:18px;font-size:13px;color:var(--mut)}
+  .stat b{color:var(--txt)}
+  .grade-circle{width:120px;height:120px;border-radius:50%;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;margin:0 auto 14px;font-weight:800;
+    border:4px solid;background:var(--card2)}
+  .grade-circle .num{font-size:46px;line-height:1}
+  .grade-circle .lbl{font-size:11px;font-weight:600;margin-top:2px}
+  .resbar{height:22px;border-radius:11px;background:var(--card2);overflow:hidden;border:1px solid var(--line);margin:8px 0}
+  .resbar>div{height:100%;display:flex;align-items:center;padding-left:10px;font-size:12px;font-weight:700;color:#fff;white-space:nowrap}
+  .review h4{margin:18px 0 10px;font-size:15px}
+  .rev-item{background:var(--card2);border:1px solid var(--line);border-left:3px solid var(--no);
+    border-radius:9px;padding:12px;margin-bottom:10px;font-size:14px}
+  .rev-item .rq{font-weight:600;margin-bottom:7px}
+  .rev-item .ra{color:#ffa8a8;font-size:13px}
+  .rev-item .rc{color:#8ce99a;font-size:13px;margin-top:3px}
+  .scale-tbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+  .scale-tbl td{padding:5px 8px;border-bottom:1px solid var(--line)}
+  .scale-tbl td:last-child{text-align:right;color:var(--mut)}
+  .hidden{display:none!important}
+  .note-box{background:rgba(245,159,0,.08);border:1px solid rgba(245,159,0,.3);
+    border-radius:9px;padding:11px 13px;font-size:12.5px;color:#ffd8a8;margin-top:14px}
+  select{background:var(--card2);color:var(--txt);border:1px solid var(--line);
+    border-radius:8px;padding:9px 12px;font-size:14px;font-family:inherit}
+  .legend{font-size:11px;color:var(--mut);margin-top:4px}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🧪 SAB Anästhesiepflege Pharmakologie</h1>
-            <p>Übungsfragen und Prüfungsfragen</p>
-        </div>
-        
-        <div class="content">
-            <div class="category-filter" id="categoryFilter"></div>
-            
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-            
-            <div class="question-counter">
-                <span id="currentQuestion">1</span> / <span id="totalQuestions">1</span>
-            </div>
-            
-            <div id="quizContainer">
-                <div class="question-text" id="questionText"></div>
-                <div class="options" id="optionsContainer"></div>
-                <div class="feedback" id="feedback"></div>
-            </div>
-            
-            <div class="results" id="results">
-                <h2>Quiz abgeschlossen!</h2>
-                <div class="score" id="scoreValue">0/0</div>
-                <div class="score-text">Richtig beantwortet</div>
-            </div>
-            
-            <div class="button-group">
-                <button class="btn-submit" id="submitBtn">Antwort prüfen</button>
-                <button class="btn-reset" id="resetBtn">Neu starten</button>
-            </div>
-            
-            <div class="navigation">
-                <button class="nav-btn" id="prevBtn">← Zurück</button>
-                <button class="nav-btn" id="nextBtn">Weiter →</button>
-            </div>
-        </div>
+<header>
+  <div class="head-in">
+    <div class="brand">Pharmakologie SAB <small>Anästhesiepflege · Prüfungsvorbereitung</small></div>
+    <button class="btn ghost sm" id="homeBtn" onclick="goHome()" style="display:none">↺ Menü</button>
+  </div>
+  <div class="progressbar" id="pbar" style="display:none"><div id="pfill"></div></div>
+</header>
+<div class="wrap">
+
+  <!-- START -->
+  <section id="start">
+    <h1>Pharmakologie-Quiz</h1>
+    <div class="sub">153 verifizierte Fragen · Antworten direkt aus der markierten PDF übernommen</div>
+    <div class="mode-grid">
+      <div class="card mode" onclick="startPractice()">
+        <div class="ico">📚</div>
+        <h3>Übungsmodus</h3>
+        <p>Sofortiges Feedback bei jedem Klick. Frei navigierbar, nach Themen filterbar – ideal zum Lernen.</p>
+      </div>
+      <div class="card mode" onclick="showExamSetup()">
+        <div class="ico">🎓</div>
+        <h3>Prüfungsmodus</h3>
+        <p>Zufällige Fragen, kein Zwischen-Feedback. Am Ende Note nach österreichischem Notensystem.</p>
+      </div>
     </div>
-    
-    <script>
-        const questions = [
-            {
-                category: "Hypnotika",
-                question: "Was ist ein Ziel der Allgemeinanästhesie?",
-                options: ["Muskelaufbau", "Konzentrationssteigerung", "Schmerzfreiheit", "Blutdruckerhöhung", "Awareness"],
-                correct: 2
-            },
-            {
-                category: "Hypnotika",
-                question: "Welcher Bestandteil gehört NICHT zu den Grundbausteinen der Vollnarkose?",
-                options: ["Hypnose", "Relaxation", "Amnesie", "Schmerzwahrnehmung", "Analgesie"],
-                correct: 3
-            },
-            {
-                category: "Hypnotika",
-                question: "Was beschreibt der MAC-Wert bei Inhalationsanästhetika?",
-                options: ["maximale Atemfrequenz", "Mindestkonzentration zur Bewusstlosigkeit", "minimale alveoläre Konzentration", "mittlerer Atemrhythmus", "Muskelaktivitätskontrolle"],
-                correct: 2
-            },
-            {
-                category: "Hypnotika",
-                question: "Welches Anästhetikum hat eine gute analgetische Potenz, aber eine schwache hypnotische Wirkung?",
-                options: ["Propofol", "Isofluran", "Desfluran", "Lachgas", "Midazolam"],
-                correct: 3
-            },
-            {
-                category: "Hypnotika",
-                question: "Welches Medikament wird zur Aufhebung der Wirkung von Benzodiazepinen verwendet?",
-                options: ["Ketamin", "Thiopental", "Naloxon", "Flumazenil", "Physostigmin"],
-                correct: 3
-            },
-            {
-                category: "Opiate",
-                question: "Was bezeichnet der Begriff Opiate genau?",
-                options: ["alle synthetischen Opioide", "Substanzen, die vom Schlafmohn abstammen", "nur synthetische Schmerzmittel", "nur körpereigene Endorphine", "alle Medikamente gegen Schmerzen"],
-                correct: 1
-            },
-            {
-                category: "Opiate",
-                question: "Welche kardiovaskuläre Auswirkung haben Opiate?",
-                options: ["Tachykardie und Blutdrucksteigerung", "Bradykardie und Sympathikusaktivierung", "Bradykardie und Blutdrucksenkung", "Blutdrucksteigerung und Vasokonstriktion", "keine Wirkung am Herzen"],
-                correct: 2
-            },
-            {
-                category: "Opiate",
-                question: "Was ist eine typische Nebenwirkung von Morphin auf die Atmung?",
-                options: ["Tachypnoe", "Atemdepression", "Hyperventilation", "Bronchodilatation", "reduzierte Sauerstoffaffinität"],
-                correct: 1
-            },
-            {
-                category: "Opiate",
-                question: "Welche Auswirkung kann ein \"Wooden Chest Syndrome\" verursachen?",
-                options: ["Hypotonie", "erschwerte Beatmung durch Muskelrigidität", "Bronchodilatation", "Bradykardie", "Hyperventilation"],
-                correct: 1
-            },
-            {
-                category: "Opiate",
-                question: "Welche Wirkung hat eine epidurale Opioidgabe hauptsächlich?",
-                options: ["muskuläre Lähmung", "Analgesie besonders bei viszeralen Schmerzen", "Bewusstseinsverlust", "Erhöhung des Hirndrucks", "Blutdrucksteigerung"],
-                correct: 1
-            },
-            {
-                category: "Opiate",
-                question: "Was beschreibt die Toleranzentwicklung bei Opiaten?",
-                options: ["verstärkte Wirkung bei wiederholter Gabe", "Wirkungsabschwächung und Notwendigkeit höherer Dosen", "sofortige Wirkung bei jeder Dosis", "Verhinderung aller Nebenwirkungen", "schnellere Ausscheidung durch die Nieren"],
-                correct: 1
-            },
-            {
-                category: "Opiate",
-                question: "Welches Opioid kann bei Niereninsuffizienz bevorzugt eingesetzt werden?",
-                options: ["Morphin", "Remifentanil", "Hydromorphon", "Piritramid", "Fentanyl"],
-                correct: 1
-            },
-            {
-                category: "Opiate",
-                question: "Welches Opioid hat eine sehr kurze Wirkdauer und wird ausschließlich i.v. gegeben?",
-                options: ["Sufentanil", "Remifentanil", "Alfentanil", "Nalbuphin", "Piritramid"],
-                correct: 1
-            },
-            {
-                category: "Opiate",
-                question: "Welche Substanz ist ein Partialagonist am κ-Rezeptor und Antagonist am µ-Rezeptor?",
-                options: ["Morphin", "Nalbuphin", "Fentanyl", "Sufentanil", "Alfentanil"],
-                correct: 1
-            },
-            {
-                category: "Opiate",
-                question: "Welcher Wirkstoff kann eine Opiatüberdosierung antagonisieren?",
-                options: ["Methylnaltrexon", "Naloxon", "Dipidolor", "Flumazenil", "Sufentanil"],
-                correct: 1
-            },
-            {
-                category: "Opiate",
-                question: "Was ist eine typ. Nebenwirkung einer schnellen Naloxongabe bei Opiatabhängigen?",
-                options: ["Euphorie", "akuter Entzug mit Agitation", "verstärkte Sedierung", "Analgesie", "Atemdepression"],
-                correct: 1
-            },
-            {
-                category: "Opiate",
-                question: "Welcher Mechanismus wird bei der opioidinduzierten Hyperalgesie (OIH) hauptsächlich vermutet?",
-                options: ["Hemmung der µ-Rezeptoren", "Aktivierung von NMDA-Rezeptoren", "Hemmung von Serotoninrezeptoren", "Blockade der GABA-Freisetzung", "Aktivierung von Beta-Rezeptoren"],
-                correct: 1
-            },
-            {
-                category: "Opiate",
-                question: "Welches Opioid sollte wegen seiner zusätzlichen Glycin-Komponente nicht epidural oder intrathekal verabreicht werden?",
-                options: ["Sufentanil", "Remifentanil", "Fentanyl", "Piritramid", "Morphin"],
-                correct: 1
-            },
-            {
-                category: "Opiate",
-                question: "Welche Eigenschaft beschreibt die \"kontextsensitive Halbwertszeit\" bei Remifentanil am besten?",
-                options: ["Sie verlängert sich mit zunehmender Infusionsdauer.", "Sie bleibt unabhängig von der Infusionsdauer konstant.", "Sie hängt von der Nierenfunktion ab.", "Sie wird durch Histaminfreisetzung verkürzt.", "Sie sinkt bei Hypothermie stark ab."],
-                correct: 1
-            },
-            {
-                category: "Opiate",
-                question: "Warum sollte bei Niereninsuffizienz Morphin nur mit Vorsicht eingesetzt werden?",
-                options: ["Kumulation von Morphin-3-Glucuronid (M3G)", "verminderte Wirksamkeit", "Akkumulation des aktiven Metaboliten M6G", "vermehrte Ausscheidung von Morphin", "vermehrte MAC-Erhöhung"],
-                correct: 0
-            },
-            {
-                category: "Opiate",
-                question: "Welche Aussage trifft auf Hydromorphon im Vergleich zu Morphin zu?",
-                options: ["Es verursacht häufiger Euphorie.", "Es hat eine geringere analgetische Potenz.", "Es ist bei eingeschränkter Nierenfunktion besser geeignet.", "Es führt zu verstärkter Atemdepression bei gleicher Dosis.", "Es wird hauptsächlich renal eliminiert."],
-                correct: 2
-            },
-            {
-                category: "Muskelrelaxanzien",
-                question: "Welcher Neurotransmitter wirkt an der motorischen Endplatte?",
-                options: ["Dopamin", "Noradrenalin", "Acetylcholin", "Adrenalin", "Serotonin"],
-                correct: 2
-            },
-            {
-                category: "Muskelrelaxanzien",
-                question: "Wie entsteht die Wirkung einer nicht-depolarisierenden neuromuskulären Blockade?",
-                options: ["Aktivierung der Kalziumkanäle", "kompetitive Blockade des ACh-Rezeptors ohne Erregung", "dauerhafte Depolarisation", "verstärkte Muskelkontraktion", "enzymatische Zerstörung von ACh"],
-                correct: 1
-            },
-            {
-                category: "Muskelrelaxanzien",
-                question: "Welche Substanz ist eine MH-Triggersubstanz?",
-                options: ["Rocuronium", "Succinylcholin", "Neostigmin", "Cis-Atracurium", "Pancuronium"],
-                correct: 1
-            },
-            {
-                category: "Muskelrelaxanzien",
-                question: "Was passiert bei einer Up-Regulation von ACh-Rezeptoren?",
-                options: ["Reduktion der Muskelaktivität", "Vermehrung unreifer Rezeptoren", "verlangsamte Muskelantwort", "erhöhte Acetylcholinesterase-Aktivität", "Abnahme von Kalium im Blut"],
-                correct: 1
-            },
-            {
-                category: "Muskelrelaxanzien",
-                question: "Welche typische Wirkung hat Pancuronium auf das kardio-vaskuläre System?",
-                options: ["Bradykardie", "Herzstillstand", "Tachykardie", "Hypotonie", "Keine Wirkung"],
-                correct: 2
-            },
-            {
-                category: "Muskelrelaxanzien",
-                question: "Welche Muskelgruppe ist am resistentesten gegenüber Muskelrelaxanzien?",
-                options: ["Zwerchfell", "Fingerbeuger", "Augenmuskeln", "Gesichtsmuskeln", "Zehenmuskeln"],
-                correct: 0
-            },
-            {
-                category: "Muskelrelaxanzien",
-                question: "Wie wird Succinylcholin hauptsächlich abgebaut?",
-                options: ["über die Leber", "über die Nieren", "durch Plasmacholinesterasen im Blut", "durch die Pankreasenzyme", "über die Lunge"],
-                correct: 2
-            },
-            {
-                category: "Muskelrelaxanzien",
-                question: "Welche der folgenden Substanzen kann die Wirkung von Rocuronium auch bei tiefer Relaxierung aufheben?",
-                options: ["Glycopyrroniumbromid", "Physiostigmin", "Sugammadex", "Atropin", "Neostigmin"],
-                correct: 2
-            },
-            {
-                category: "Muskelrelaxanzien",
-                question: "Was ist eine mögliche Nebenwirkung von Neostigmin?",
-                options: ["Hypertonie", "Tachykardie", "Bronchokonstruktion", "Hyperglykämie", "Euphorie"],
-                correct: 2
-            },
-            {
-                category: "Muskelrelaxanzien",
-                question: "Welche Aussage über Cis-Atracurium ist korrekt?",
-                options: ["Es wird hauptsächlich über die Nieren eliminiert.", "Es hat eine Anschlagszeit unter 30 Sekunden.", "Es verursacht oft starke kardiovaskuläre Nebenwirkungen.", "Es wird durch Hofmann-Elimination abgebaut.", "Es benötigt bei älteren Patienten eine Dosisanpassung."],
-                correct: 3
-            },
-            {
-                category: "Reanimation",
-                question: "Wann soll Adrenalin bei schockbarem Rhythmus während der CPR verabreicht werden?",
-                options: ["nach dem 1. Schock + 3. Schock", "nach dem 2. Schock + 6. Schock", "nach dem 3. Schock + 5. Schock", "nach dem 4. Schock + alle 2 Minuten", "sofort bei verfügbarem i.v. Zugang"],
-                correct: 0
-            },
-            {
-                category: "Reanimation",
-                question: "Wie hoch ist die empfohlene Adrenalindosis für Erwachsene während der Reanimation?",
-                options: ["0,5 mg alle 5 Minuten", "1 mg alle 3-5 Minuten", "2 mg alle 10 Minuten", "5 mg alle 15 Minuten", "0,1 mg kontinuierlich"],
-                correct: 1
-            },
-            {
-                category: "Reanimation",
-                question: "Wann wird Adrenalin bei einem nicht-schockbaren Rhythmus gegeben?",
-                options: ["nach dem 2. Schock", "sobald wie möglich", "nach 2 Minuten CPR", "nach 3 Defibrilationen", "nach ROSC"],
-                correct: 1
-            },
-            {
-                category: "Reanimation",
-                question: "Wie hoch ist die Adrenalindosis bei Kindern während der Reanimation?",
-                options: ["0,1 mg/kg", "5 µg/kg", "10 µg/kg", "100 µg/kg", "1 mg/kg"],
-                correct: 0
-            },
-            {
-                category: "Reanimation",
-                question: "Was ist die maximale Adrenalindosis pro Gabe bei Kindern?",
-                options: ["0,5 mg", "1 mg", "2 mg", "5 mg", "10 mg"],
-                correct: 1
-            },
-            {
-                category: "Reanimation",
-                question: "Bis wann wird Adrenalin während einer CPR verabreicht?",
-                options: ["bis zum 5. Schock", "bis zur Beendigung der CPR oder ROSC", "maximal 5 Dosen", "nur während Defibrillation", "nur bis 10 Minuten CPR"],
-                correct: 1
-            },
-            {
-                category: "Reanimation",
-                question: "Welches Medikament wird als potentes Antiarrhythmikum in der Reanimation eingesetzt?",
-                options: ["Atropin", "Amiodaron", "Adrenalin", "Noradrenalin", "Metoprolol"],
-                correct: 1
-            },
-            {
-                category: "Reanimation",
-                question: "Wann wird Amiodaron bei Erwachsenen zum ersten Mal verabreicht?",
-                options: ["nach 1. Schock", "nach 2. Schock", "nach 3. Schock", "nach 4. Schock", "nach ROSC"],
-                correct: 2
-            },
-            {
-                category: "Reanimation",
-                question: "Die erste Amiodaron Dosis in der Reanimation bei Erwachsenen ist in der Höhe von?",
-                options: ["150 mg", "100 mg", "300 mg", "50 mg", "200 mg"],
-                correct: 2
-            },
-            {
-                category: "Reanimation",
-                question: "Die zweite Amiodaron Dosis in der Reanimation bei Erwachsenen ist in der Höhe von?",
-                options: ["300 mg", "150 mg", "100 mg", "50 mg", "200 mg"],
-                correct: 1
-            },
-            {
-                category: "Reanimation",
-                question: "Welche Komplikation kann bei der Bolusgabe von Amiodaron auftreten?",
-                options: ["Tachykardie", "Hypertonie", "Hypotonie", "Hypoglykämie", "Bronchospasmus"],
-                correct: 2
-            },
-            {
-                category: "Reanimation",
-                question: "Welche Substanz ist eine Alternative zu Amiodaron bei der Reanimation Erwachsener?",
-                options: ["Dopamin", "Lidocain", "Magnesium", "Noradrenalin", "Atropin"],
-                correct: 1
-            },
-            {
-                category: "Reanimation",
-                question: "Welche Lidocain-Dosis wird beim 3. Schock verabreicht?",
-                options: ["50 mg", "100 mg", "150 mg", "200 mg", "75 mg"],
-                correct: 2
-            },
-            {
-                category: "Reanimation",
-                question: "Welche Lidocain-Dosis folgt nach dem 5. Schock?",
-                options: ["25 mg", "50 mg", "75 mg", "100 mg", "125 mg"],
-                correct: 2
-            },
-            {
-                category: "Reanimation",
-                question: "Welche Klasse von Antiarrhythmika gehört Amiodaron an?",
-                options: ["Klasse I", "Klasse II", "Klasse III", "Klasse IV", "Klasse V"],
-                correct: 2
-            },
-            {
-                category: "Reanimation",
-                question: "Welche maximale Amiodaron-Dosis darf bei Kindern nach dem 3. Schock verabreicht werden?",
-                options: ["100 mg", "150 mg", "200 mg", "300 mg", "400 mg"],
-                correct: 2
-            },
-            {
-                category: "Reanimation",
-                question: "Welche Amiodaron-Dosis pro kg Körpergewicht erhalten Kinder nach dem 3. Schock?",
-                options: ["3 mg/kg", "5 mg/kg", "7 mg/kg", "10 mg/kg", "15 mg/kg"],
-                correct: 1
-            },
-            {
-                category: "Reanimation",
-                question: "Wie erfolgt die Verabreichung von Medikamenten in der Reanimation primär?",
-                options: ["oral", "intramuskulär", "intravenös/intraossär", "subkutan", "intrathekal"],
-                correct: 2
-            },
-            {
-                category: "Reanimation",
-                question: "Was bedeutet ROSC im Reanimationskontext?",
-                options: ["Return of Successful Compression", "Restoration of Stable Cardiac output", "Return of Spontaneous Circulation", "Restart of Sudden Cardiac output", "Recovery of Sinus Conduction"],
-                correct: 2
-            },
-            {
-                category: "Reanimation",
-                question: "Was passiert bei erfolgreichem ROSC?",
-                options: ["Fortführung der Defibrillation", "Stoppen der CPR", "Weitergabe von Amiodaron", "Erhöhung der Adrenalindosis", "neuen CPR-Zyklus starten"],
-                correct: 1
-            },
-            {
-                category: "Reanimation",
-                question: "Welche spezifische Nebenwirkung ist bei der Bolusgabe von Amiodaron ausserhalb der Reanimation besonders zu beachten?",
-                options: ["Myokardischämie", "massiver Bronchospasmus", "akute Niereninsuffizienz", "deutliche Hypotonie", "bradykarde Kammerarrhythmien"],
-                correct: 3
-            },
-            {
-                category: "Reanimation",
-                question: "Was ist ein bedeutender Unterschied der Adrenalingabe zwischen schockbaren und nichtschockbaren Rhythmen?",
-                options: ["Dosisanpassung bei schockbaren Rhythmen", "früherer Beginn der Adrenalingabe bei schockbaren Rhythmen", "späterer Beginn der Adrenalingabe bei schockbaren Rhythmen", "keine Adrenalingabe bei nicht-schockbaren Rhythmen", "Verdopplung der Adrenalindosis bei nicht-schockbaren Rhythmen"],
-                correct: 2
-            },
-            {
-                category: "Reanimation",
-                question: "Wie viel Amiodaron darf bei Kindern nach der 5. Defibrillation max. verabreicht werden?",
-                options: ["100 mg", "120 mg", "150 mg", "200 mg", "300 mg"],
-                correct: 1
-            },
-            {
-                category: "Reanimation",
-                question: "Welche Alternative kann bei Erwachsenen zur Amiodarontherapie im Reanimationsablauf eingesetzt werden und ab welcher Defibrillation?",
-                options: ["Lidocain, nach dem 1. Schock", "Magnesium, nach dem 3. Schock", "Lidocain, nach dem 3. Schock", "Atropin, nach dem 5. Schock", "Calcium, nach dem 2. Schock"],
-                correct: 2
-            },
-            {
-                category: "Hämodynamik",
-                question: "Welche Auswirkungen hat die Aktivierung des α1-Rezeptors?",
-                options: ["schnellere Herzfrequenz", "Vasokonstriktion der Blutgefäße", "Bronchodilatation", "Blutglukoseanstieg", "langsamere Herzfrequenz"],
-                correct: 1
-            },
-            {
-                category: "Hämodynamik",
-                question: "Welchen primären Effekt hat Adrenalin im Bereich von 1-10µg?",
-                options: ["Vasokonstriktion der peripheren Gefäße", "keinen Effekt", "gesteigerte Herzaktivität, geringer Effekt auf Vasotonus", "Müdigkeit", "langsame Atmung"],
-                correct: 2
-            },
-            {
-                category: "Hämodynamik",
-                question: "Welches Medikament bewirkt eine reine periphere Vasokonstriktion?",
-                options: ["Adrenalin", "Dobutamin", "Phenylephrin", "Noradrenalin", "Ephedrin"],
-                correct: 2
-            },
-            {
-                category: "Hämodynamik",
-                question: "Wie wirkt Dobutamin?",
-                options: ["steigert Müdigkeit", "verlangsamt Herzfrequenz", "gesteigerte Herzkraft", "Muskelrelaxation", "Vasokonstriktion"],
-                correct: 2
-            },
-            {
-                category: "Hämodynamik",
-                question: "Wofür wird Clevidipin (Cleviprex) verwendet?",
-                options: ["Fieber senken", "Herzfrequenz steigern", "rasche Blutdrucksenkung", "Magen beruhigen", "Appetit steigern"],
-                correct: 2
-            },
-            {
-                category: "Lokalanästhetika",
-                question: "Welche Ionenkanäle werden durch Lokalanästhetika blockiert?",
-                options: ["Kaliumkanäle", "Calciumkanäle", "Chloridkanäle", "spannungsabhängige Natriumkanäle", "Adrenalinrezeptoren"],
-                correct: 3
-            },
-            {
-                category: "Lokalanästhetika",
-                question: "Welcher Typ von Lokalanästhetika hat typischerweise eine längere Wirkdauer und ein geringeres allergisches Risiko?",
-                options: ["Estertyp", "Zuckertyp", "Amidtyp", "Basentyp", "Fetttyp"],
-                correct: 2
-            },
-            {
-                category: "Lokalanästhetika",
-                question: "Welcher dieser Wirkstoffe gehört zum Amidtyp?",
-                options: ["Procain", "Chloroprocain", "Tetracain", "Lidocain", "Benzocain"],
-                correct: 3
-            },
-            {
-                category: "Lokalanästhetika",
-                question: "Was ist eine mögliche Nebenwirkung von Prilocain?",
-                options: ["Tinnitus", "Methämoglobinämie", "Allergie gegen Lidocain", "Erbrechen", "Husten"],
-                correct: 1
-            },
-            {
-                category: "Lokalanästhetika",
-                question: "Was kann bei einer Lokalanästhetika-Intoxikation helfen?",
-                options: ["Kalzium", "Ibuprofen", "Methylenblau", "Lipidtherapie", "Glukose"],
-                correct: 3
-            },
-            {
-                category: "Grundlagen",
-                question: "Was bedeutet Pharmakodynamik?",
-                options: ["Was die Pharmaka mit dem Körper machen", "Was der Körper mit den Pharmaka macht", "Wie sich die Pharmaka im Körper verteilen", "Wie sich die Pharmaka aus dem Körper eliminieren", "Wie der Körper die Pharmaka aufnimmt"],
-                correct: 0
-            },
-            {
-                category: "Grundlagen",
-                question: "Was gehört nicht zum ADME bei der Pharmakokinetik?",
-                options: ["Absorption", "Ausscheidung", "Verteilung", "Resorption", "Metabolismus"],
-                correct: 3
-            },
-            {
-                category: "Grundlagen",
-                question: "Welches Organ ist hauptsächlich am First-Pass-Effekt beteiligt?",
-                options: ["Leber", "Haut", "Darm", "Niere", "Magen"],
-                correct: 0
-            },
-            {
-                category: "Grundlagen",
-                question: "Welche Veränderungen bei älteren Menschen bei der Physiologie trifft nicht zu?",
-                options: ["Veränderungen des Volume of distribution im Alter führt zu späterem Wirkeintritt bei ausgewählten Medikamenten", "Veränderung der Anteile an Muskelmasse und Körperfett", "Reduzierte Nieren-/Leber-Clearance verkürzt die Dauer der Wirkung", "50% weniger Midazolam/Fentanyl/Propofol erforderlich", "Pro Dekade an Lebensalter geringerer MAC-Wert erforderlich"],
-                correct: 2
-            },
-            {
-                category: "Grundlagen",
-                question: "Welches der folgenden Medikamente ist Plazentagängig?",
-                options: ["Glycopyrrolate", "Heparin", "Insulin", "alle Paralytika", "alle Opioide"],
-                correct: 4
-            },
-            {
-                category: "Grundlagen",
-                question: "Welches dieser Medikament ist ein Beispiel für einen partiellen Antagonisten?",
-                options: ["Diazepam", "Flumazenil", "Nalbuphin", "Sugammadex", "Naloxon"],
-                correct: 2
-            },
-            {
-                category: "Anästhetika",
-                question: "Was beschreibt die MAC von 1,0 eines Inhalationsanästhetikums?",
-                options: ["Die maximale sichere Konzentration", "Die Konzentration, bei der 50 % der Patienten keine Reaktion auf Hautinzision zeigen", "Die minimale intravenöse Dosis zur Narkoseeinleitung", "Die Konzentration zur sicheren Intubation aller Patienten", "Die Konzentration mit maximaler Analgesie"],
-                correct: 1
-            },
-            {
-                category: "Anästhetika",
-                question: "Welche Wirkung besitzt Propofol NICHT?",
-                options: ["Antiemetisch", "Vasokonstriktion", "Analgesie", "Senkung des ICP", "Sedierend"],
-                correct: 1
-            },
-            {
-                category: "Anästhetika",
-                question: "Welche Aussage auf Sevofluran trifft zu?",
-                options: ["Es reizt die Atemwege stark", "Es eignet sich zur inhalativen Einleitung bei Kindern", "Es darf nie im Minimal-Flow verwendet werden", "Es besitzt keine bronchodilatierende Wirkung", "Es erhöht den Hirndruck nie"],
-                correct: 1
-            },
-            {
-                category: "Anästhetika",
-                question: "Welcher Rezeptor wird durch Esketamin blockiert?",
-                options: ["GABA-Rezeptor", "Dopaminrezeptor", "NMDA-Rezeptor", "Serotoninrezeptor", "Alpha-1-Rezeptor"],
-                correct: 2
-            },
-            {
-                category: "Anästhetika",
-                question: "Welche Wirkung ist typisch für Esketamin?",
-                options: ["Bradykardie und Hypotonie", "Verlust aller Schutzreflexe", "Dissoziative Anästhesie", "Starke Atemdepression bei Standarddosierung", "Keine analgetische Wirkung"],
-                correct: 2
-            },
-            {
-                category: "Anästhetika",
-                question: "Welche Nebenwirkung kann unter Benzodiazepinen auftreten?",
-                options: ["Schwere Hypertonie", "Paradoxe Reaktion", "Analgesieverlust", "Bronchospasmus", "Muskelspasmen"],
-                correct: 1
-            },
-            {
-                category: "Anästhetika",
-                question: "Welche Aussage zu Desfluran ist korrekt?",
-                options: ["Es eignet sich gut zur Maskeneinleitung", "Es benötigt keinen Spezialverdampfer", "Es kann bei schneller Anflutung Tachykardie verursachen", "Es besitzt keine Wirkung auf die Atemwege", "Es hat einen hohen Siedepunkt"],
-                correct: 2
-            },
-            {
-                category: "Anästhetika",
-                question: "Welche Aussage zum Propofolinfusionssyndrom (PRIS) ist korrekt?",
-                options: ["Es tritt typischerweise nach kurzer Niedrigdosis-Sedierung auf", "Hyperkaliämie spricht gegen PRIS", "Ursache ist eine mitochondriale Energiestoffwechselstörung", "Bradykardie ist ausgeschlossen", "PRIS tritt nur bei Kindern auf"],
-                correct: 2
-            },
-            {
-                category: "Anästhetika",
-                question: "Welche Aussage zu Etomidat trifft zu?",
-                options: ["Etomidat besitzt eine ausgeprägte analgetische Wirkung", "Etomidat verursacht eine starke Sympathikusblockade", "Bei Bolusgaben während der Narkoseeinleitung kann es zu Myoklonien kommen", "Die maximale Gesamtdosis ist unbegrenzt", "Etomidat wirkt erst nach mehreren Minuten"],
-                correct: 2
-            },
-            {
-                category: "Anästhetika",
-                question: "Welche Aussage zu Barbituraten trifft zu?",
-                options: ["Barbiturate besitzen einen langsamen Wirkeintritt von mehreren Minuten", "Barbiturate werden ausschließlich renal eliminiert", "Bei paravenöser Injektion kann es zu Hautnekrosen kommen", "Barbiturate erhöhen den Hirndruck", "Thiopental besitzt eine lange Wirkdauer aufgrund langsamer Umverteilung"],
-                correct: 2
-            },
-            {
-                category: "Anästhetika",
-                question: "Welche Aussage zu Thiopental bei Sectio caesarea ist korrekt?",
-                options: ["Thiopental führt immer zu schlechteren APGAR-Werten als Propofol", "Thiopental beeinflusst den Uterustonus nicht", "Thiopental darf bei Sectio nicht mehr verwendet werden", "Propofol ist bei Sectio klar überlegen", "Stillen ist nach Thiopental nicht möglich"],
-                correct: 1
-            },
-            {
-                category: "Anästhetika",
-                question: "Worauf ist bei der Gabe von Flumazenil zu achten?",
-                options: ["Ist ein Antagonist für Opiate", "Hat eine kürzere Wirkdauer als die meisten Benzodiazepine selbst (Rebound Effekt)", "Wirkeintritt nach 30 min", "Hat eine intrinsische Aktivität", "Initiale Dosierung von 0,5mg i.v."],
-                correct: 1
-            },
-            {
-                category: "Opiate",
-                question: "Welcher Rezeptor vermittelt hauptsächlich die analgetische Wirkung von Opioiden?",
-                options: ["α2-Rezeptor", "μ-Rezeptor", "β1-Rezeptor", "D2-Rezeptor", "H1-Rezeptor"],
-                correct: 1
-            },
-            {
-                category: "Opiate",
-                question: "Welche Aussage zu Remifentanil trifft zu?",
-                options: ["Lange Wirkdauer", "darf nicht intrathekal verabreicht werden", "Ausschließlich orale Gabe", "Keine analgetische Wirkung", "Kein starkes Opioid"],
-                correct: 1
-            },
-            {
-                category: "Opiate",
-                question: "Welches Opiat zählt zu den partiellen Antagonisten der Opiate?",
-                options: ["Fentanyl", "Vendal", "Remifentanil", "Piritramid", "Nalbuphin"],
-                correct: 4
-            },
-            {
-                category: "NSAR",
-                question: "Welche*r Patient*in hat ein besonders erhöhtes Risiko für NSAR-induzierte Nierenfunktionsstörungen?",
-                options: ["Gesunde*r junge*r Erwachsene*r", "Patient*innen mit Hypovolämie und ACE-Hemmer-Therapie", "Patient*innen mit Hyperthyreose", "Patient*innen mit isolierter Tachykardie", "Patient*innen mit Eisenmangelanämie"],
-                correct: 1
-            },
-            {
-                category: "NSAR",
-                question: "Welche Aussage zu COX-2-Hemmern trifft zu?",
-                options: ["Sie erhöhen vor allem das Risiko gastrointestinaler Blutungen", "Sie besitzen keine antipyretische Wirkung", "Sie sind besonders mit einem erhöhten Thromboserisiko assoziiert", "Sie hemmen irreversibel die Thrombozytenaggregation", "Sie erhöhen das Risiko für Entzündungen"],
-                correct: 2
-            },
-            {
-                category: "NSAR",
-                question: "Welcher Unterschied zwischen Metamizol und Paracetamol ist korrekt?",
-                options: ["Beide wirken stark entzündungshemmend", "Nur Paracetamol wirkt spasmolytisch", "Metamizol besitzt eine bessere spasmolytische Wirkung", "Paracetamol verursacht häufiger Agranulozytose", "Metamizol und Paracetamol sind in ihrer Wirkung ident"],
-                correct: 2
-            },
-            {
-                category: "NSAR",
-                question: "Welche Aussage zu Thrombozytenhemmung stimmt?",
-                options: ["Metamizol hemmt stark die Thrombozytenaggregation", "Paracetamol hemmt irreversibel COX-1", "Weder Metamizol noch Paracetamol besitzen relevante Thrombozytenhemmung", "Beide wirken wie ASS", "Metamizol verlängert regelhaft die Thrombozytenlebensdauer auf über 20 Tage"],
-                correct: 2
-            },
-            {
-                category: "Muskelrelaxantien",
-                question: "Welches Muskelrelaxans wirkt depolarisierend?",
-                options: ["Rocuronium", "Vecuronium", "Atracurium", "Succinylcholin", "Cisatracurium"],
-                correct: 3
-            },
-            {
-                category: "Muskelrelaxantien",
-                question: "Welche schwerwiegende Nebenwirkung ist typisch für Succinylcholin?",
-                options: ["Hypoglykämie", "Maligne Hyperthermie", "Bradykardie nur bei Erwachsenen", "Hypokalzämie", "Atemalkalose"],
-                correct: 1
-            },
-            {
-                category: "Muskelrelaxantien",
-                question: "Welche Dosierung von Sugammadex wird zur sofortigen Aufhebung einer neuromuskulären Blockade nach RSI mit hochdosiertem Rocuronium empfohlen?",
-                options: ["2 mg/kgKG", "4 mg/kgKG", "8 mg/kgKG", "12 mg/kgKG", "16 mg/kgKG"],
-                correct: 2
-            },
-            {
-                category: "Muskelrelaxantien",
-                question: "Was ist keine Kontraindikation bei der Gabe von Neostigmin?",
-                options: ["Bradykarde Herzrhythmusstörungen", "Mechanischer Ileus", "Succinylcholin Gabe (Phase I Block)", "TOF von 80%", "TOF von 0%"],
-                correct: 3
-            },
-            {
-                category: "Lokalanästhetika",
-                question: "Wie wirken Lokalanästhetika auf Nervenzellen?",
-                options: ["Sie blockieren spannungsabhängige Kaliumkanäle", "Sie blockieren spannungsabhängige Natriumkanäle", "Sie aktivieren Opioidrezeptoren", "Sie aktivieren Kalziumkanäle", "Sie erhöhen die Membranpermeabilität für Kalzium"],
-                correct: 1
-            },
-            {
-                category: "Lokalanästhetika",
-                question: "Welche Eigenschaft hat der Estertyp im Vergleich zum Amidtyp?",
-                options: ["Längere Wirkdauer und geringeres Allergierisiko", "Kürzere Wirkdauer und höheres Allergierisiko", "Längere Wirkdauer und höheres Allergierisiko", "Kürzere Wirkdauer und geringeres Allergierisiko", "Gleiche Wirkdauer, aber stärkere analgetische Potenz"],
-                correct: 1
-            },
-            {
-                category: "Lokalanästhetika",
-                question: "Welches Lokalanästhetikum hat die längste Wirkdauer?",
-                options: ["Lidocain", "Mepivacain", "Bupivacain", "Chloroprocain", "Prilocain"],
-                correct: 2
-            },
-            {
-                category: "Lokalanästhetika",
-                question: "Was ist das Antidot bei einer schweren Methämoglobinämie?",
-                options: ["Naloxon", "Atropin", "Methylenblau", "Flumazenil", "Lipidlösung 20%"],
-                correct: 2
-            },
-            {
-                category: "Lokalanästhetika",
-                question: "LAST – Welches ist das typische Frühzeichen von ZNS-Seite bei systemischer Lokalanästhetika-Intoxikation?",
-                options: ["Bewusstlosigkeit", "Krampfanfall", "Periorale Parästhesien (Taubheit/Kribbeln um Mund und Zunge)", "Bradykardie", "Atemstillstand"],
-                correct: 2
-            },
-            {
-                category: "Hämodynamik",
-                question: "Welches Medikament wirkt als reiner Alpha1-Agonist?",
-                options: ["Dobutamin", "Phenylephrin", "Adrenalin", "Esmolol", "Milrinon"],
-                correct: 1
-            },
-            {
-                category: "Hämodynamik",
-                question: "Welche Aussage zu Beta1-Rezeptoren trifft am ehesten zu?",
-                options: ["Sie führen hauptsächlich zu Bronchodilatation.", "Sie hemmen die Noradrenalinfreisetzung.", "Sie erhöhen die Herzfrequenz und die Kontraktilität.", "Sie verursachen periphere Vasokonstriktion.", "Sie führen zu einer Erhöhung der Lipolyse."],
-                correct: 2
-            },
-            {
-                category: "Hämodynamik",
-                question: "Welche Nebenwirkungen können bei Adrenalingabe auftreten?",
-                options: ["Vermindern Arhythmien, senken Blutdruck, Hypoglykämie", "Hypokaliämie, Hyperglykämie, verstärken Arhythmien", "Fieber, erhöhter Speichelfluss", "Bradykardie, Muskelzuckungen, Hyperkaliämie", "Kopfschmerzen, Tachykardie, Erbrechen"],
-                correct: 1
-            },
-            {
-                category: "Hämodynamik",
-                question: "Welches Medikament eignet sich perioperativ am besten zur Behandlung einer supraventrikulären Tachykardie mit begleitender arterieller Hypertonie aufgrund des raschen Wirkungseintritts und der kurzen Wirkdauer?",
-                options: ["Levosimendan", "Vasopressin", "Adrenalin", "Esmolol", "Urapidil"],
-                correct: 3
-            },
-            {
-                category: "Hämodynamik",
-                question: "Was muss bei der Gabe von Vasopressin beachtet werden?",
-                options: ["Es darf nicht mit Adrenalin kombiniert werden.", "Gewebsischämie und Nekrosenbildung bei Gabe über PVK.", "Bei Gabe über PVK kann eine Thrombophlebitis auftreten.", "Kann sowohl im Bolus, als auch als KI oder im Perfusor gegeben werden.", "Im Notfall darf Vasopressin s.c. gegeben werden."],
-                correct: 1
-            },
-            {
-                category: "Infusionstherapie",
-                question: "Welche Aussage beschreibt eine balancierte VEL am besten?",
-                options: ["Sie enthält ausschließlich Natriumchlorid", "Sie dient primär als Eiweißersatz", "Ihre Elektrolytzusammensetzung ähnelt dem Plasma bzw. EZR", "Sie wirkt stark hyperonkotisch", "Sie verbleibt dauerhaft intravasal"],
-                correct: 2
-            },
-            {
-                category: "Infusionstherapie",
-                question: "Wie verteilt sich ein 1000-ml-VELO-Infusat ungefähr im Körper?",
-                options: ["75 % intravasal, 25 % interstitiell", "50 % intravasal, 50 % interstitiell", "25 % intravasal, 75 % interstitiell", "100 % intravasal", "Ausschließlich intrazellulär"],
-                correct: 2
-            },
-            {
-                category: "Infusionstherapie",
-                question: "Welche Aussage zur Volumenwirkung von Humanalbumin 20 % ist korrekt?",
-                options: ["1 ml Albumin bindet kein zusätzliches Wasser", "Albumin verbleibt nur wenige Minuten intravasal", "1 ml HA 20 % zieht etwa 3–4 ml interstitielles Wasser ins Gefäßsystem", "Albumin wirkt ausschließlich interstitiell", "Albumin reduziert den onkotischen Druck"],
-                correct: 2
-            },
-            {
-                category: "Infusionstherapie",
-                question: "In welcher Situation kann HA 20 % bei großem Volumenverlust eingesetzt werden?",
-                options: ["Leichte Exsikkose", "Migräne", "Schweres Trauma oder Verbrennungen mit Hypoproteinämie", "Hyperventilation", "Hypoglykämie"],
-                correct: 2
-            },
-            {
-                category: "Alpha 2",
-                question: "Welche Aussage über die Wirkung des zentral postsynaptischen α2-Rezeptors trifft am ehesten zu?",
-                options: ["Steigerung des Sympathikotonus und Tachykardie", "Hemmung des Vagotonus mit Bronchodilatation", "Förderung von Analgesie, Sedierung und Anxiolyse", "Massive Freisetzung von Noradrenalin", "Ausschließliche Wirkung auf periphere Gefäße"],
-                correct: 2
-            },
-            {
-                category: "Alpha 2",
-                question: "Welche Besonderheit kann bei der initialen Bolusgabe von Clonidin auftreten?",
-                options: ["Sofortige tiefe Bradykardie ohne RR-Veränderung", "Initialer Blutdruckanstieg durch α1-Wirkung", "Sofortige Atemdepression mit Hyperkapnie", "Vollständige Blockade des Parasympathikus", "Schwere Hypoglykämie innerhalb weniger Minuten"],
-                correct: 1
-            },
-            {
-                category: "Alpha 2",
-                question: "Welche Aussage zur präsynaptischen peripheren Wirkung von α2-Rezeptoren ist richtig?",
-                options: ["Verstärkte Ausschüttung von Acetylcholin", "Erhöhung der Dopaminfreisetzung", "Hemmung der Noradrenalinfreisetzung", "Aktivierung der neuromuskulären Endplatte", "Steigerung der Katecholaminsynthese"],
-                correct: 2
-            },
-            {
-                category: "Alpha 2",
-                question: "Welche Aussage zur Anwendung von Dexmedetomidin in der Intensivmedizin trifft zu?",
-                options: ["Die maximale Dosierung beträgt 0,2 µg/kgKG/h", "Es wird ausschließlich als Bolus appliziert", "Die Initialdosis liegt typischerweise bei 0,7 µg/kgKG/h", "Eine Dosisänderung zeigt innerhalb weniger Sekunden Wirkung", "Es darf nur bei beatmeten Patienten eingesetzt werden"],
-                correct: 2
-            },
-            {
-                category: "Antiemetika",
-                question: "Welche Aussage zu PONV trifft zu?",
-                options: ["Es betrifft nur Kinder", "Frauen sind häufiger betroffen", "Rauchen erhöht das Risiko deutlich", "Regionalanästhesie erhöht das Risiko", "Es tritt ausschließlich postoperativ auf"],
-                correct: 1
-            },
-            {
-                category: "Antiemetika",
-                question: "Welches Medikament kann zusätzlich antiemetisch wirken?",
-                options: ["Dexamethason", "Adrenalin", "Atropin", "Noradrenalin", "Lidocain"],
-                correct: 0
-            },
-            {
-                category: "Antiemetika",
-                question: "Welche Nebenwirkung kann bei Ondansetron auftreten?",
-                options: ["Bradykardie", "QT-Verlängerung", "Hyperglykämie", "Bronchospasmus", "Nierenversagen"],
-                correct: 1
-            },
-            {
-                category: "Antiemetika",
-                question: "Welche Rezeptoren werden durch Ondansetron hauptsächlich blockiert?",
-                options: ["α1-Rezeptoren", "β1-Rezeptoren", "D2-Rezeptoren", "5-HT3-Rezeptoren", "NMDA-Rezeptoren"],
-                correct: 3
-            },
-            {
-                category: "Antiemetika",
-                question: "Welcher Wirkstoff gehört zu den Dopaminantagonisten?",
-                options: ["Ondansetron", "Droperidol", "Dexamethason", "Midazolam", "Ketamin"],
-                correct: 1
-            },
-            {
-                category: "PAP",
-                question: "Welcher Faktor gehört NICHT zum PEN-FAST-Score?",
-                options: ["Reaktion innerhalb der letzten 5 Jahre", "Therapiepflichtigkeit der Reaktion", "Anaphylaxie oder Angioödem", "Schwere kutane Arzneimittelreaktion", "Positiver Hauttest auf Penicillin"],
-                correct: 0
-            },
-            {
-                category: "PAP",
-                question: "Wann sollte die perioperative Antibiotikaprophylaxe in der Regel verabreicht werden?",
-                options: ["Direkt nach Hautschnitt", "2 Stunden nach OP-Beginn", "30–60 Minuten vor Hautschnitt", "Erst nach Wundverschluss", "Am Vorabend der Operation"],
-                correct: 2
-            },
-            {
-                category: "PAP",
-                question: "Welche Maßnahme wird laut ÖGARI-Checkliste bei Aspiration NICHT empfohlen?",
-                options: ["Oropharynx absaugen", "Frühzeitige Intubation", "Bronchoskopie erwägen", "Routinemäßige Steroidgabe", "Absaugen über den Tubus vor erstem Beatmungshub"],
-                correct: 3
-            },
-            {
-                category: "PAP",
-                question: "Welche Aussage beschreibt die Konsequenz einer verspäteten perioperativen Antibiotikaprophylaxe laut Vortrag am zutreffendsten?",
-                options: ["Eine Antibiotikagabe nach Wundverschluss reduziert die Wundinfektionsrate weiterhin signifikant", "Erfolgt die präoperative Gabe nicht rechtzeitig, sollte auf eine PAP vollständig verzichtet werden", "Ist die präoperative Gabe nicht möglich, soll die Antibiotikagabe frühestmöglich intraoperativ erfolgen, da nach Wundverschluss kein Einfluss mehr auf die Wundinfektionsrate besteht", "Die Wirksamkeit der PAP ist ausschließlich von der Antibiotikadosis abhängig.", "Eine intraoperative Gabe ist nur bei orthopädischen Eingriffen sinnvoll"],
-                correct: 2
-            },
-            {
-                category: "CPR",
-                question: "Wie wird bei einem schockbaren Rhythmus Amiodaron verabreicht?",
-                options: ["300mg nach dem 3. Schock und 150mg nach dem 5. Schock", "Gar nicht – Amiodaron ist lt. Guidelines obsolet.", "150mg nach jedem 2. Schock.", "150mg nach dem 3. Schock und 300mg nach dem 5. Schock.", "300mg einmalig nach dem 1.Schock."],
-                correct: 0
-            },
-            {
-                category: "CPR",
-                question: "Wie ist die Dosierung bei Adrenalin beim Kind?",
-                options: ["100mcg/kg Körpergewicht", "0,1mg/kg Körpergewicht", "Adrenalin darf bei Kindern bis zum 10 Lebensjahr nicht verwendet werden", "0,01mg/kg Körpergewicht", "Ab den 14. Lebensjahr wie bei Erwachsenen."],
-                correct: 1
-            },
-            {
-                category: "CPR",
-                question: "Wann wird Adrenalin im Rahmen der CPR sofort gegeben?",
-                options: ["Wenn ein ZVK vorhanden ist.", "Wenn ein nicht schockbarer Rhythmus besteht.", "Wenn ein Arzt die CPR leitet.", "Wenn ein schockbarer Rhythmus besteht.", "Wenn Defibrillation alleine nicht ausreichend ist."],
-                correct: 1
-            },
-            {
-                category: "CPR",
-                question: "Wann wird intraoperativ mit Reanimation begonnen?",
-                options: ["Wenn RR Systolisch unter 30mmHg fällt und eine Bradykardie vorliegt.", "Mit Reanimation wird erst bei Asystolie begonnen.", "Erst wenn 30s die Kurve der Arterie keinen Auswurf mehr zeigt.", "Intraoperativ darf nur mit Herzalarmteam reanimiert werden.", "Wenn RR systolisch unter 50mmHg und das etCO2 trotz Intervention abfällt."],
-                correct: 4
-            },
-            {
-                category: "Pharmakokinetik",
-                question: "Was beschreibt die Pharmakokinetik?",
-                options: ["Wie der Körper auf ein Medikament reagiert.", "Was der Körper mit den Pharmaka macht", "Wie sich die Pharmaka im Körper verteilen und ausscheidet.", "Wie ein Medikament hergestellt wird.", "Woher ein Medikament stammt."],
-                correct: 1
-            },
-            {
-                category: "Pharmakokinetik",
-                question: "Welche Verabreichungsform hat eine 100%-ige Bioverfügbarkeit?",
-                options: ["oral", "sublingual", "transdermal", "intravenös", "rektal"],
-                correct: 3
-            },
-            {
-                category: "Pharmakodynamik",
-                question: "Was beschreibt die Pharmakodynamik?",
-                options: ["Die Leberfunktion bei Medikamenteneinnahme.", "Die Wirkung eines Medikaments auf den Körper.", "Die Verpackung von Arzneimitteln.", "Die Bewegung von Medikamenten im Körper.", "Die Ausscheidung von Medikamenten im Körper."],
-                correct: 1
-            },
-            {
-                category: "Pharmakodynamik",
-                question: "Was passiert im Körper, wenn ein Medikament an einen Rezeptor bindet?",
-                options: ["Es kann ein biologisches Signal auslösen.", "Es kann sofort ausgeschieden werden.", "Es kann auf die Blutzusammensetzung einwirken.", "Es verändert den pH-Wert des Magens.", "Es reagiert auf Blutbestandteile des Körpers."],
-                correct: 0
-            },
-            {
-                category: "Pharmakodynamik",
-                question: "Was passiert im Körper, wenn ein Medikament als Agonist an einen Rezeptor bindet?",
-                options: ["Der Rezeptor wird zerstört.", "Es wird kein Effekt ausgelöst.", "Das Medikament wird sofort abgebaut.", "Es wird ein bestimmter Effekt im Körper aktiviert.", "Der Rezeptor verlässt die Zelle."],
-                correct: 3
-            },
-            {
-                category: "Alpha 2",
-                question: "Wofür sind zentrale α2-Rezeptoren verantwortlich?",
-                options: ["erhöhte Sympathikus-Aktivität", "Schmerzlinderung", "verringerte Sympathikus-Aktivität", "Blutdrucksteigerung", "gesteigerte Noradrenalin-Ausschüttung"],
-                correct: 2
-            },
-            {
-                category: "Alpha 2",
-                question: "Welches Medikament wirkt verstärkt auf α2-Rezeptoren?",
-                options: ["Paracetamol", "Clonidin", "Ibuprofen", "Dexmedetomidin", "Diazepam"],
-                correct: 1
-            },
-            {
-                category: "Alpha 2",
-                question: "Welcher Effekt kann nach langer Clonidin-Gabe auftreten?",
-                options: ["Hypoglykämie", "Rebound-Hypertonie", "chronischer Husten", "Fieber", "Diarrhoe"],
-                correct: 1
-            },
-            {
-                category: "Alpha 2",
-                question: "Welchen Effekt hat Clonidin (Catapresan®) NICHT?",
-                options: ["Muskelerschlaffung", "Beruhigung", "Therapie Entzugssymptomatik", "Therapie post-operatives Shivering", "reduzierter Anästhesiebedarf"],
-                correct: 0
-            },
-            {
-                category: "Alpha 2",
-                question: "Wofür wird Dexmedetomidin (Dexdor®) eingesetzt?",
-                options: ["Halsschmerzen", "Obstruktion der unteren Atemwege", "Schlaflosigkeit", "Sedierung auf Intensivstation", "Krampflösung"],
-                correct: 3
-            },
-            {
-                category: "Antiemetika",
-                question: "Was bedeutet die Abkürzung PONV?",
-                options: ["postoperative Nervenverletzung", "postoperative Narkoseverzögerung", "postoperative Übelkeit und Erbrechen", "präoperative Narkosevorbereitung", "pathologische Organverlagerung"],
-                correct: 2
-            },
-            {
-                category: "Antiemetika",
-                question: "Wann tritt PONV typischerweise auf?",
-                options: ["nur während der OP", "innerhalb von 5 Tagen nach der OP", "nur bei ambulanten Operationen", "nur bei Kindern", "24-48h nach dem Eingriff"],
-                correct: 1
-            },
-            {
-                category: "Antiemetika",
-                question: "Welcher dieser Faktoren erhöht NICHT das PONV-Risiko?",
-                options: ["weibliches Geschlecht", "Raucherstatus", "frühere Kinetosen", "junge Patienten", "Opiate nach der OP"],
-                correct: 1
-            },
-            {
-                category: "Antiemetika",
-                question: "Welche Anästhesieform ist mit einem erhöhten PONV-Risiko verbunden?",
-                options: ["Regionalanästhesie", "Lokalanästhesie", "Sedierung", "Vollnarkose", "Spinalanästhesie"],
-                correct: 3
-            },
-            {
-                category: "Antiemetika",
-                question: "Welche OP zählt zu den Eingriffen mit hohem PONV-Risiko?",
-                options: ["Blinddarm-OP", "Hautbiopsie", "Strabismus-OP", "Nasenscheidewand-OP", "Herzkatheter-Untersuchung"],
-                correct: 2
-            },
-            {
-                category: "Antiemetika",
-                question: "Welcher Patient sollte eine PONV-Prophylaxe erhalten?",
-                options: ["60-jähriger Raucher mit kurzer Augen-OP", "45-jährige Frau, Nichtraucherin, bekommt Vollnarkose und Opiate postoperativ", "30-jähriger Mann mit Regionalanästhesie ohne Vorerkrankungen", "70-jährige Frau mit lokaler Hautentfernung", "20-jähriger Mann mit Lungenentzündung unter Antibiotika"],
-                correct: 1
-            },
-            {
-                category: "Infusionstherapie",
-                question: "Was ist das primäre Ziel einer balancierten Vollelektrolytlösung (VEL)?",
-                options: ["Blutzucker senken", "Blutdruck erhöhen", "physiologische Elektrolytzusammensetzung bieten", "Leberfunktion verbessern", "Interstitium füllen"],
-                correct: 2
-            },
-            {
-                category: "Infusionstherapie",
-                question: "Wie viel Prozent einer 500ml VEL-Infusion verbleiben im Blutkreislauf?",
-                options: ["10 %", "25 %", "50 %", "75 %", "100 %"],
-                correct: 1
-            },
-            {
-                category: "Infusionstherapie",
-                question: "Welche Substanz wird zur Volumenexpansion bei Hypalbuminämie verwendet?",
-                options: ["Ringer-Laktat", "NaCl 0,9%", "Glucose 5%", "Humanalbumin 20%", "Vollelektrolytlösung (VEL)"],
-                correct: 3
-            },
-            {
-                category: "NSAR",
-                question: "Was ist die Hauptwirkung von NSAR?",
-                options: ["Steigerung des Appetits", "Hemmung der Prostaglandinbildung", "Förderung der Blutbildung", "Muskelaufbau", "Hemmung der Insulinausschüttung"],
-                correct: 1
-            },
-            {
-                category: "NSAR",
-                question: "Welche Nebenwirkung ist typisch für NSAR bei längerer Anwendung?",
-                options: ["Hörverlust", "Hautausschlag", "Gastritis oder Magengeschwüre", "Gewichtszunahme", "Muskelschwäche"],
-                correct: 2
-            },
-            {
-                category: "NSAR",
-                question: "Welche NSAR-Wirkung ist bei COX-2-Hemmung erwünscht?",
-                options: ["Magenreizung", "Blutverdünnung", "Flüssigkeitsretention", "Thrombozytenaktivierung", "Schmerz- und Entzündungshemmung"],
-                correct: 4
-            },
-            {
-                category: "NSAR",
-                question: "Was ist eine seltene, aber schwerwiegende Nebenwirkung von Metamizol?",
-                options: ["Hypotonie", "Agranulozytose", "Osteoporose", "Diabetes mellitus", "allergische Reaktion"],
-                correct: 1
-            },
-            {
-                category: "NSAR",
-                question: "Welche Aussage trifft auf Paracetamol zu?",
-                options: ["Es ist stark entzündungshemmend.", "Es darf in der Schwangerschaft nicht angewendet werden.", "Es wirkt über die Hemmung der Prostaglandine im ZNS.", "Es hat eine hohe Magenunverträglichkeit.", "Es wirkt stark spasmolytisch."],
-                correct: 2
-            },
-            {
-                category: "Antibiotika",
-                question: "Wann sollte die Antibiotikaprophylaxe idealerweise verabreicht werden?",
-                options: ["1 Tag präoperativ", "während der Narkoseeinleitung", "30–60 min. vor Hautschnitt", "direkt nach Hautverschluss", "im Aufwachraum"],
-                correct: 2
-            },
-            {
-                category: "Antibiotika",
-                question: "Wie viele Patienten mit angegebener Penicillin-Allergie vertragen es tatsächlich?",
-                options: ["10 %", "25 %", "50 %", "95 %", "100 %"],
-                correct: 3
-            },
-            {
-                category: "Antibiotika",
-                question: "Wann ist eine Wiederholung der Antibiotikagabe während der Operation notwendig?",
-                options: ["nach 1 Stunde", "bei Hautschnitt", "bei Operationen über 2 Stunden", "nach doppelter Halbwertszeit oder hohem Blutverlust", "nach Narkoseeinleitung"],
-                correct: 3
-            },
-            {
-                category: "RSI",
-                question: "Ein Patient erhält im Rahmen einer Rapid Sequence Induction (RSI) Rocuronium in hoher Dosis (1,2 mg/kg). Es liegt eine tiefe neuromuskuläre Blockade vor, die aufgehoben werden muss. Welche Dosierung von Sugammadex (Bridion) ist in dieser Notfallsituation indiziert?",
-                options: ["1 mg/kg", "2 mg/kg", "4 mg/kg", "8 mg/kg", "16 mg/kg"],
-                correct: 3
-            }
-        ];
 
-        let currentQuestion = 0;
-        let score = 0;
-        let answered = [];
-        let filteredQuestions = [...questions];
-        let selectedCategory = null;
+    <div class="card" id="examSetup" style="display:none">
+      <h3 style="margin-top:0">Prüfung konfigurieren</h3>
+      <div class="row spread" style="margin-bottom:14px">
+        <span>Anzahl der Fragen</span>
+        <select id="examCount">
+          <option value="20">20 Fragen</option>
+          <option value="30" selected>30 Fragen</option>
+          <option value="40">40 Fragen</option>
+          <option value="60">60 Fragen</option>
+          <option value="0">Alle 153 Fragen</option>
+        </select>
+      </div>
+      <button class="btn" style="width:100%" onclick="startExam()">Prüfung starten ▶</button>
+      <table class="scale-tbl">
+        <tr><td><b>1</b> Sehr gut</td><td>≥ 90 %</td></tr>
+        <tr><td><b>2</b> Gut</td><td>≥ 80 %</td></tr>
+        <tr><td><b>3</b> Befriedigend</td><td>≥ 70 %</td></tr>
+        <tr><td><b>4</b> Genügend</td><td>≥ 60 %</td></tr>
+        <tr><td><b>5</b> Nicht genügend</td><td>&lt; 60 %</td></tr>
+      </table>
+      <div class="legend">Standard-Notenschlüssel (anpassbar – AKH/Schule kann abweichen).</div>
+    </div>
 
-        const categories = [...new Set(questions.map(q => q.category))];
+    <div class="note-box">
+      <b>Hinweis zum Lösungsschlüssel:</b> Die Antworten der Sets „Grundlagen“ und „Prüfungsfragen Teil 2“ stammen aus den im PDF markierten Lösungen. Der erste Übungsfragen-Satz (Hypnotika–Lokalanästhetika) ist im PDF <i>nicht</i> markiert – diese Antworten folgen den ERC-2021-Leitlinien bzw. der Standardpharmakologie. Einzelne pädiatrische CPR-Wiederholungsdosen können je nach Skriptum (Bartos) leicht abweichen.
+    </div>
+  </section>
 
-        function init() {
-            displayCategories();
-            displayQuestion();
-            updateProgress();
-        }
+  <!-- PRACTICE FILTER -->
+  <section id="practiceFilter" class="hidden">
+    <h1>Übungsmodus</h1>
+    <div class="sub">Thema wählen – oder alle Fragen üben.</div>
+    <div class="card">
+      <div class="chips" id="catChips"></div>
+    </div>
+    <button class="btn" style="width:100%" onclick="beginPractice()">Üben starten ▶</button>
+  </section>
 
-        function displayCategories() {
-            const filter = document.getElementById('categoryFilter');
-            filter.innerHTML = '<button class="category-btn active" data-category="all">Alle</button>';
-            categories.forEach(cat => {
-                filter.innerHTML += `<button class="category-btn" data-category="${cat}">${cat}</button>`;
-            });
+  <!-- QUIZ -->
+  <section id="quiz" class="hidden">
+    <div class="card">
+      <div class="qmeta">
+        <span class="cat" id="qCat">—</span>
+        <span id="qIdx">—</span>
+      </div>
+      <div class="qtext" id="qText">—</div>
+      <div class="opts" id="qOpts"></div>
+      <div class="feedback" id="qFeed"></div>
+    </div>
+    <div class="nav">
+      <button class="btn ghost" id="prevBtn" onclick="prevQ()">‹ Zurück</button>
+      <button class="btn" id="nextBtn" onclick="nextQ()">Weiter ›</button>
+    </div>
+    <div class="count" id="liveScore"></div>
+  </section>
 
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-                    e.target.classList.add('active');
-                    filterByCategory(e.target.dataset.category);
-                });
-            });
-        }
+  <!-- RESULT -->
+  <section id="result" class="hidden">
+    <h1>Ergebnis</h1>
+    <div class="card" style="text-align:center">
+      <div class="grade-circle" id="gradeCircle"><span class="num" id="gradeNum">–</span><span class="lbl" id="gradeLbl"></span></div>
+      <div style="font-size:20px;font-weight:700" id="resScore">–</div>
+      <div class="resbar"><div id="resBar"></div></div>
+      <div style="color:var(--mut);font-size:13px" id="resMeta"></div>
+    </div>
+    <div class="card review" id="reviewCard">
+      <h4 id="reviewTitle">Falsch beantwortete Fragen</h4>
+      <div id="reviewList"></div>
+    </div>
+    <div class="nav">
+      <button class="btn ghost" onclick="goHome()">↺ Hauptmenü</button>
+      <button class="btn" id="retryBtn" onclick="retry()">Neue Prüfung ▶</button>
+    </div>
+  </section>
 
-        function filterByCategory(category) {
-            if (category === 'all') {
-                filteredQuestions = [...questions];
-            } else {
-                filteredQuestions = questions.filter(q => q.category === category);
-            }
-            currentQuestion = 0;
-            score = 0;
-            answered = [];
-            document.getElementById('results').classList.remove('show');
-            document.getElementById('quizContainer').style.display = 'block';
-            displayQuestion();
-            updateProgress();
-        }
+</div>
 
-        function displayQuestion() {
-            const q = filteredQuestions[currentQuestion];
-            document.getElementById('questionText').textContent = `${currentQuestion + 1}. ${q.question}`;
-            
-            const optionsHtml = q.options.map((option, index) => `
-                <label class="option">
-                    <input type="radio" name="answer" value="${index}">
-                    <span>${String.fromCharCode(97 + index)}) ${option}</span>
-                </label>
-            `).join('');
-            
-            document.getElementById('optionsContainer').innerHTML = optionsHtml;
-            document.getElementById('currentQuestion').textContent = currentQuestion + 1;
-            document.getElementById('totalQuestions').textContent = filteredQuestions.length;
-            document.getElementById('feedback').classList.remove('show');
-            document.getElementById('submitBtn').textContent = 'Antwort prüfen';
-            document.getElementById('submitBtn').disabled = false;
+<script>
+const QUESTIONS = [{"category": "Hypnotika", "question": "Was ist ein Ziel der Allgemeinanästhesie?", "options": ["Muskelaufbau", "Konzentrationssteigerung", "Schmerzfreiheit", "Blutdruckerhöhung", "Awareness"], "correct": 2}, {"category": "Hypnotika", "question": "Welcher Bestandteil gehört NICHT zu den Grundbausteinen der Vollnarkose?", "options": ["Hypnose", "Relaxation", "Amnesie", "Schmerzwahrnehmung", "Analgesie"], "correct": 3}, {"category": "Hypnotika", "question": "Was beschreibt der MAC-Wert bei Inhalationsanästhetika?", "options": ["maximale Atemfrequenz", "Mindestkonzentration zur Bewusstlosigkeit", "minimale alveoläre Konzentration", "mittlerer Atemrhythmus", "Muskelaktivitätskontrolle"], "correct": 2}, {"category": "Hypnotika", "question": "Welches Anästhetikum hat eine gute analgetische Potenz, aber eine schwache hypnotische Wirkung?", "options": ["Propofol", "Isofluran", "Desfluran", "Lachgas", "Midazolam"], "correct": 3}, {"category": "Hypnotika", "question": "Welches Medikament wird zur Aufhebung der Wirkung von Benzodiazepinen verwendet?", "options": ["Ketamin", "Thiopental", "Naloxon", "Flumazenil", "Physostigmin"], "correct": 3}, {"category": "Opiate", "question": "Was bezeichnet der Begriff Opiate genau?", "options": ["alle synthetischen Opioide", "Substanzen, die vom Schlafmohn abstammen", "nur synthetische Schmerzmittel", "nur körpereigene Endorphine", "alle Medikamente gegen Schmerzen"], "correct": 1}, {"category": "Opiate", "question": "Welche kardiovaskuläre Auswirkung haben Opiate?", "options": ["Tachykardie und Blutdrucksteigerung", "Bradykardie und Sympathikusaktivierung", "Bradykardie und Blutdrucksenkung", "Blutdrucksteigerung und Vasokonstriktion", "keine Wirkung am Herzen"], "correct": 2}, {"category": "Opiate", "question": "Was ist eine typische Nebenwirkung von Morphin auf die Atmung?", "options": ["Tachypnoe", "Atemdepression", "Hyperventilation", "Bronchodilatation", "reduzierte Sauerstoffaffinität"], "correct": 1}, {"category": "Opiate", "question": "Welche Auswirkung kann ein „Wooden Chest Syndrome“ verursachen?", "options": ["Hypotonie", "erschwerte Beatmung durch Muskelrigidität", "Bronchodilatation", "Bradykardie", "Hyperventilation"], "correct": 1}, {"category": "Opiate", "question": "Welche Wirkung hat eine epidurale Opioidgabe hauptsächlich?", "options": ["muskuläre Lähmung", "Analgesie besonders bei viszeralen Schmerzen", "Bewusstseinsverlust", "Erhöhung des Hirndrucks", "Blutdrucksteigerung"], "correct": 1}, {"category": "Opiate", "question": "Was beschreibt die Toleranzentwicklung bei Opiaten?", "options": ["verstärkte Wirkung bei wiederholter Gabe", "Wirkungsabschwächung und Notwendigkeit höherer Dosen", "sofortige Wirkung bei jeder Dosis", "Verhinderung aller Nebenwirkungen", "schnellere Ausscheidung durch die Nieren"], "correct": 1}, {"category": "Opiate", "question": "Welches Opioid kann bei Niereninsuffizienz bevorzugt eingesetzt werden?", "options": ["Morphin", "Remifentanil", "Hydromorphon", "Piritramid", "Fentanyl"], "correct": 1}, {"category": "Opiate", "question": "Welches Opioid hat eine sehr kurze Wirkdauer und wird ausschließlich i.v. gegeben?", "options": ["Sufentanil", "Remifentanil", "Alfentanil", "Nalbuphin", "Piritramid"], "correct": 1}, {"category": "Opiate", "question": "Welche Substanz ist ein Partialagonist am κ-Rezeptor und Antagonist am µ-Rezeptor?", "options": ["Morphin", "Nalbuphin", "Fentanyl", "Sufentanil", "Alfentanil"], "correct": 1}, {"category": "Opiate", "question": "Welcher Wirkstoff kann eine Opiatüberdosierung antagonisieren?", "options": ["Methylnaltrexon", "Naloxon", "Dipidolor", "Flumazenil", "Sufentanil"], "correct": 1}, {"category": "Opiate", "question": "Was ist eine typische Nebenwirkung einer schnellen Naloxongabe bei Opiatabhängigen?", "options": ["Euphorie", "akuter Entzug mit Agitation", "verstärkte Sedierung", "Analgesie", "Atemdepression"], "correct": 1}, {"category": "Opiate", "question": "Welcher Mechanismus wird bei der opioidinduzierten Hyperalgesie (OIH) hauptsächlich vermutet?", "options": ["Hemmung der µ-Rezeptoren", "Aktivierung von NMDA-Rezeptoren", "Hemmung von Serotoninrezeptoren", "Blockade der GABA-Freisetzung", "Aktivierung von Beta-Rezeptoren"], "correct": 1}, {"category": "Opiate", "question": "Welches Opioid sollte wegen seiner zusätzlichen Glycin-Komponente nicht epidural oder intrathekal verabreicht werden?", "options": ["Sufentanil", "Remifentanil", "Fentanyl", "Piritramid", "Morphin"], "correct": 1}, {"category": "Opiate", "question": "Welche Eigenschaft beschreibt die „kontextsensitive Halbwertszeit“ bei Remifentanil am besten?", "options": ["Sie verlängert sich mit zunehmender Infusionsdauer.", "Sie bleibt unabhängig von der Infusionsdauer konstant.", "Sie hängt von der Nierenfunktion ab.", "Sie wird durch Histaminfreisetzung verkürzt.", "Sie sinkt bei Hypothermie stark ab."], "correct": 1}, {"category": "Opiate", "question": "Warum sollte bei Niereninsuffizienz Morphin nur mit Vorsicht eingesetzt werden?", "options": ["Kumulation von Morphin-3-Glucuronid (M3G)", "verminderte Wirksamkeit", "Akkumulation des aktiven Metaboliten M6G", "vermehrte Ausscheidung von Morphin", "vermehrte MAC-Erhöhung"], "correct": 2}, {"category": "Opiate", "question": "Welche Aussage trifft auf Hydromorphon im Vergleich zu Morphin zu?", "options": ["Es verursacht häufiger Euphorie.", "Es hat eine geringere analgetische Potenz.", "Es ist bei eingeschränkter Nierenfunktion besser geeignet.", "Es führt zu verstärkter Atemdepression bei gleicher Dosis.", "Es wird hauptsächlich renal eliminiert."], "correct": 2}, {"category": "Muskelrelaxanzien", "question": "Welcher Neurotransmitter wirkt an der motorischen Endplatte?", "options": ["Dopamin", "Noradrenalin", "Acetylcholin", "Adrenalin", "Serotonin"], "correct": 2}, {"category": "Muskelrelaxanzien", "question": "Wie entsteht die Wirkung einer nicht-depolarisierenden neuromuskulären Blockade?", "options": ["Aktivierung der Kalziumkanäle", "kompetitive Blockade des ACh-Rezeptors ohne Erregung", "dauerhafte Depolarisation", "verstärkte Muskelkontraktion", "enzymatische Zerstörung von ACh"], "correct": 1}, {"category": "Muskelrelaxanzien", "question": "Welche Substanz ist eine MH-Triggersubstanz?", "options": ["Rocuronium", "Succinylcholin", "Neostigmin", "Cis-Atracurium", "Pancuronium"], "correct": 1}, {"category": "Muskelrelaxanzien", "question": "Was passiert bei einer Up-Regulation von ACh-Rezeptoren?", "options": ["Reduktion der Muskelaktivität", "Vermehrung unreifer Rezeptoren", "verlangsamte Muskelantwort", "erhöhte Acetylcholinesterase-Aktivität", "Abnahme von Kalium im Blut"], "correct": 1}, {"category": "Muskelrelaxanzien", "question": "Welche typische Wirkung hat Pancuronium auf das kardio-vaskuläre System?", "options": ["Bradykardie", "Herzstillstand", "Tachykardie", "Hypotonie", "Keine Wirkung"], "correct": 2}, {"category": "Muskelrelaxanzien", "question": "Welche Muskelgruppe ist am resistentesten gegenüber Muskelrelaxanzien?", "options": ["Zwerchfell", "Fingerbeuger", "Augenmuskeln", "Gesichtsmuskeln", "Zehenmuskeln"], "correct": 0}, {"category": "Muskelrelaxanzien", "question": "Wie wird Succinylcholin hauptsächlich abgebaut?", "options": ["über die Leber", "über die Nieren", "durch Plasmacholinesterasen im Blut", "durch die Pankreasenzyme", "über die Lunge"], "correct": 2}, {"category": "Muskelrelaxanzien", "question": "Welche der folgenden Substanzen kann die Wirkung von Rocuronium auch bei tiefer Relaxierung aufheben?", "options": ["Glycopyrroniumbromid", "Physiostigmin", "Sugammadex", "Atropin", "Neostigmin"], "correct": 2}, {"category": "Muskelrelaxanzien", "question": "Was ist eine mögliche Nebenwirkung von Neostigmin?", "options": ["Hypertonie", "Tachykardie", "Bronchokonstriktion", "Hyperglykämie", "Euphorie"], "correct": 2}, {"category": "Muskelrelaxanzien", "question": "Welche Aussage über Cis-Atracurium ist korrekt?", "options": ["Es wird hauptsächlich über die Nieren eliminiert.", "Es hat eine Anschlagszeit unter 30 Sekunden.", "Es verursacht oft starke kardiovaskuläre Nebenwirkungen.", "Es wird durch Hofmann-Elimination abgebaut.", "Es benötigt bei älteren Patienten eine Dosisanpassung."], "correct": 3}, {"category": "Reanimation", "question": "Wann soll Adrenalin bei schockbarem Rhythmus während der CPR verabreicht werden?", "options": ["nach dem 1. Schock + 3. Schock", "nach dem 2. Schock + 6. Schock", "nach dem 3. Schock + 5. Schock", "nach dem 4. Schock + alle 2 Minuten", "sofort bei verfügbarem i.v. Zugang"], "correct": 2}, {"category": "Reanimation", "question": "Wie hoch ist die empfohlene Adrenalindosis für Erwachsene während der Reanimation?", "options": ["0,5 mg alle 5 Minuten", "1 mg alle 3-5 Minuten", "2 mg alle 10 Minuten", "5 mg alle 15 Minuten", "0,1 mg kontinuierlich"], "correct": 1}, {"category": "Reanimation", "question": "Wann wird Adrenalin bei einem nicht-schockbaren Rhythmus gegeben?", "options": ["nach dem 2. Schock", "sobald wie möglich", "nach 2 Minuten CPR", "nach 3 Defibrillationen", "nach ROSC"], "correct": 1}, {"category": "Reanimation", "question": "Wie hoch ist die Adrenalindosis bei Kindern während der Reanimation?", "options": ["0,1 mg/kg", "5 µg/kg", "10 µg/kg", "100 µg/kg", "1 mg/kg"], "correct": 2}, {"category": "Reanimation", "question": "Was ist die maximale Adrenalindosis pro Gabe bei Kindern?", "options": ["0,5 mg", "1 mg", "2 mg", "5 mg", "10 mg"], "correct": 1}, {"category": "Reanimation", "question": "Bis wann wird Adrenalin während einer CPR verabreicht?", "options": ["bis zum 5. Schock", "bis zur Beendigung der CPR oder ROSC", "maximal 5 Dosen", "nur während Defibrillation", "nur bis 10 Minuten CPR"], "correct": 1}, {"category": "Reanimation", "question": "Welches Medikament wird als potentes Antiarrhythmikum in der Reanimation eingesetzt?", "options": ["Atropin", "Amiodaron", "Adrenalin", "Noradrenalin", "Metoprolol"], "correct": 1}, {"category": "Reanimation", "question": "Wann wird Amiodaron bei Erwachsenen zum ersten Mal verabreicht?", "options": ["nach 1. Schock", "nach 2. Schock", "nach 3. Schock", "nach 4. Schock", "nach ROSC"], "correct": 2}, {"category": "Reanimation", "question": "Die erste Amiodaron Dosis in der Reanimation bei Erwachsenen ist in der Höhe von?", "options": ["150 mg", "100 mg", "300 mg", "50 mg", "200 mg"], "correct": 2}, {"category": "Reanimation", "question": "Die zweite Amiodaron Dosis in der Reanimation bei Erwachsenen ist in der Höhe von?", "options": ["300 mg", "150 mg", "100 mg", "50 mg", "200 mg"], "correct": 1}, {"category": "Reanimation", "question": "Welche Komplikation kann bei der Bolusgabe von Amiodaron auftreten?", "options": ["Tachykardie", "Hypertonie", "Hypotonie", "Hypoglykämie", "Bronchospasmus"], "correct": 2}, {"category": "Reanimation", "question": "Welche Substanz ist eine Alternative zu Amiodaron bei der Reanimation Erwachsener?", "options": ["Dopamin", "Lidocain", "Magnesium", "Noradrenalin", "Atropin"], "correct": 1}, {"category": "Reanimation", "question": "Welche Lidocain-Dosis wird beim 3. Schock verabreicht?", "options": ["50 mg", "100 mg", "150 mg", "200 mg", "75 mg"], "correct": 1}, {"category": "Reanimation", "question": "Welche Lidocain-Dosis folgt nach dem 5. Schock?", "options": ["25 mg", "50 mg", "75 mg", "100 mg", "125 mg"], "correct": 1}, {"category": "Reanimation", "question": "Welcher Klasse von Antiarrhythmika gehört Amiodaron an?", "options": ["Klasse I", "Klasse II", "Klasse III", "Klasse IV", "Klasse V"], "correct": 2}, {"category": "Reanimation", "question": "Welche maximale Amiodaron-Dosis darf bei Kindern nach dem 3. Schock verabreicht werden?", "options": ["100 mg", "150 mg", "200 mg", "300 mg", "400 mg"], "correct": 3}, {"category": "Reanimation", "question": "Welche Amiodaron-Dosis pro kg Körpergewicht erhalten Kinder nach dem 3. Schock?", "options": ["3 mg/kg", "5 mg/kg", "7 mg/kg", "10 mg/kg", "15 mg/kg"], "correct": 1}, {"category": "Reanimation", "question": "Wie erfolgt die Verabreichung von Medikamenten in der Reanimation primär?", "options": ["oral", "intramuskulär", "intravenös/intraossär", "subkutan", "intrathekal"], "correct": 2}, {"category": "Reanimation", "question": "Was bedeutet ROSC im Reanimationskontext?", "options": ["Return of Successful Compression", "Restoration of Stable Cardiac output", "Return of Spontaneous Circulation", "Restart of Sudden Cardiac output", "Recovery of Sinus Conduction"], "correct": 2}, {"category": "Reanimation", "question": "Was passiert bei erfolgreichem ROSC?", "options": ["Fortführung der Defibrillation", "Stoppen der CPR", "Weitergabe von Amiodaron", "Erhöhung der Adrenalindosis", "neuen CPR-Zyklus starten"], "correct": 1}, {"category": "Reanimation", "question": "Welche spezifische Nebenwirkung ist bei der Bolusgabe von Amiodaron ausserhalb der Reanimation besonders zu beachten?", "options": ["Myokardischämie", "massiver Bronchospasmus", "akute Niereninsuffizienz", "deutliche Hypotonie", "bradykarde Kammerarrhythmien"], "correct": 3}, {"category": "Reanimation", "question": "Was ist ein bedeutender Unterschied der Adrenalingabe zwischen schockbaren und nicht-schockbaren Rhythmen?", "options": ["Dosisanpassung bei schockbaren Rhythmen", "früherer Beginn der Adrenalingabe bei schockbaren Rhythmen", "späterer Beginn der Adrenalingabe bei schockbaren Rhythmen", "keine Adrenalingabe bei nicht-schockbaren Rhythmen", "Verdopplung der Adrenalindosis bei nicht-schockbaren Rhythmen"], "correct": 2}, {"category": "Reanimation", "question": "Wie viel Amiodaron darf bei Kindern nach der 5. Defibrillation max. verabreicht werden?", "options": ["100 mg", "120 mg", "150 mg", "200 mg", "300 mg"], "correct": 4}, {"category": "Reanimation", "question": "Welche Alternative kann bei Erwachsenen zur Amiodarontherapie im Reanimationsablauf eingesetzt werden und ab welcher Defibrillation?", "options": ["Lidocain, nach dem 1. Schock", "Magnesium, nach dem 3. Schock", "Lidocain, nach dem 3. Schock", "Atropin, nach dem 5. Schock", "Calcium, nach dem 2. Schock"], "correct": 2}, {"category": "Hämodynamik", "question": "Welche Auswirkungen hat die Aktivierung des α1-Rezeptors?", "options": ["schnellere Herzfrequenz", "Vasokonstriktion der Blutgefäße", "Bronchodilatation", "Blutglukoseanstieg", "langsamere Herzfrequenz"], "correct": 1}, {"category": "Hämodynamik", "question": "Welchen primären Effekt hat Adrenalin im Bereich von 1-10µg?", "options": ["Vasokonstriktion der peripheren Gefäße", "keinen Effekt", "gesteigerte Herzaktivität, geringer Effekt auf Vasotonus", "Müdigkeit", "langsame Atmung"], "correct": 2}, {"category": "Hämodynamik", "question": "Welches Medikament bewirkt eine reine periphere Vasokonstriktion?", "options": ["Adrenalin", "Dobutamin", "Phenylephrin", "Noradrenalin", "Ephedrin"], "correct": 2}, {"category": "Hämodynamik", "question": "Wie wirkt Dobutamin?", "options": ["steigert Müdigkeit", "verlangsamt Herzfrequenz", "gesteigerte Herzkraft", "Muskelrelaxation", "Vasokonstriktion"], "correct": 2}, {"category": "Hämodynamik", "question": "Wofür wird Clevidipin (Cleviprex) verwendet?", "options": ["Fieber senken", "Herzfrequenz steigern", "rasche Blutdrucksenkung", "Magen beruhigen", "Appetit steigern"], "correct": 2}, {"category": "Lokalanästhetika", "question": "Welche Ionenkanäle werden durch Lokalanästhetika blockiert?", "options": ["Kaliumkanäle", "Calciumkanäle", "Chloridkanäle", "spannungsabhängige Natriumkanäle", "Adrenalinrezeptoren"], "correct": 3}, {"category": "Lokalanästhetika", "question": "Welcher Typ von Lokalanästhetika hat typischerweise eine längere Wirkdauer und ein geringeres allergisches Risiko?", "options": ["Estertyp", "Zuckertyp", "Amidtyp", "Basentyp", "Fetttyp"], "correct": 2}, {"category": "Lokalanästhetika", "question": "Welcher dieser Wirkstoffe gehört zum Amidtyp?", "options": ["Procain", "Chloroprocain", "Tetracain", "Lidocain", "Benzocain"], "correct": 3}, {"category": "Lokalanästhetika", "question": "Was ist eine mögliche Nebenwirkung von Prilocain?", "options": ["Tinnitus", "Methämoglobinämie", "Allergie gegen Lidocain", "Erbrechen", "Husten"], "correct": 1}, {"category": "Lokalanästhetika", "question": "Was kann bei einer Lokalanästhetika-Intoxikation helfen?", "options": ["Kalzium", "Ibuprofen", "Methylenblau", "Lipidtherapie", "Glukose"], "correct": 3}, {"category": "Grundlagen", "question": "Was bedeutet Pharmakodynamik?", "options": ["Was die Pharmaka mit dem Körper machen", "Was der Körper mit den Pharmaka macht", "Wie sich die Pharmaka im Körper verteilen", "Wie sich die Pharmaka aus dem Körper eliminieren", "Wie der Körper die Pharmaka aufnimmt"], "correct": 0}, {"category": "Grundlagen", "question": "Was gehört nicht zum ADME bei der Pharmakokinetik?", "options": ["Absorption", "Ausscheidung", "Verteilung", "Resorption", "Metabolismus"], "correct": 3}, {"category": "Grundlagen", "question": "Welches Organ ist hauptsächlich am First-Pass-Effekt beteiligt?", "options": ["Leber", "Haut", "Darm", "Niere", "Magen"], "correct": 0}, {"category": "Grundlagen", "question": "Welche Veränderungen bei älteren Menschen bei der Physiologie trifft nicht zu?", "options": ["Veränderungen des Volume of distribution im Alter führt zu späterem Wirkeintritt bei ausgewählten Medikamenten", "Veränderung der Anteile an Muskelmasse und Körperfett", "Reduzierte Nieren-/Leber-Clearance verkürzt die Dauer der Wirkung", "50% weniger Midazolam/Fentanyl/Propofol erforderlich", "Pro Dekade an Lebensalter geringerer MAC-Wert erforderlich"], "correct": 2}, {"category": "Grundlagen", "question": "Welches der folgenden Medikamente ist Plazentagängig?", "options": ["Glycopyrrolate", "Heparin", "Insulin", "alle Paralytika", "alle Opioide"], "correct": 4}, {"category": "Grundlagen", "question": "Welches dieser Medikament ist ein Beispiel für einen partiellen Antagonisten?", "options": ["Diazepam", "Flumazenil", "Nalbuphin", "Sugammadex", "Naloxon"], "correct": 2}, {"category": "Anästhetika", "question": "Was beschreibt die MAC von 1,0 eines Inhalationsanästhetikums?", "options": ["Die maximale sichere Konzentration", "Die Konzentration, bei der 50 % der Patienten keine Reaktion auf Hautinzision zeigen", "Die minimale intravenöse Dosis zur Narkoseeinleitung", "Die Konzentration zur sicheren Intubation aller Patienten", "Die Konzentration mit maximaler Analgesie"], "correct": 1}, {"category": "Anästhetika", "question": "Welche Wirkung besitzt Propofol NICHT?", "options": ["Antiemetisch", "Vasokonstriktion", "Analgesie", "Senkung des ICP", "Sedierend"], "correct": 2}, {"category": "Anästhetika", "question": "Welche Aussage auf Sevofluran trifft zu?", "options": ["Es reizt die Atemwege stark", "Es eignet sich zur inhalativen Einleitung bei Kindern", "Es darf nie im Minimal-Flow verwendet werden", "Es besitzt keine bronchodilatierende Wirkung", "Es erhöht den Hirndruck nie"], "correct": 1}, {"category": "Anästhetika", "question": "Welcher Rezeptor wird durch Esketamin blockiert?", "options": ["GABA-Rezeptor", "Dopaminrezeptor", "NMDA-Rezeptor", "Serotoninrezeptor", "Alpha-1-Rezeptor"], "correct": 2}, {"category": "Anästhetika", "question": "Welche Wirkung ist typisch für Esketamin?", "options": ["Bradykardie und Hypotonie", "Verlust aller Schutzreflexe", "Dissoziative Anästhesie", "Starke Atemdepression bei Standarddosierung", "Keine analgetische Wirkung"], "correct": 2}, {"category": "Anästhetika", "question": "Welche Nebenwirkung kann unter Benzodiazepinen auftreten?", "options": ["Schwere Hypertonie", "Paradoxe Reaktion", "Analgesieverlust", "Bronchospasmus", "Muskelspasmen"], "correct": 1}, {"category": "Anästhetika", "question": "Welche Aussage zu Desfluran ist korrekt?", "options": ["Es eignet sich gut zur Maskeneinleitung", "Es benötigt keinen Spezialverdampfer", "Es kann bei schneller Anflutung Tachykardie verursachen", "Es besitzt keine Wirkung auf die Atemwege", "Es hat einen hohen Siedepunkt"], "correct": 2}, {"category": "Anästhetika", "question": "Welche Aussage zum Propofolinfusionssyndrom (PRIS) ist korrekt?", "options": ["Es tritt typischerweise nach kurzer Niedrigdosis-Sedierung auf", "Hyperkaliämie spricht gegen PRIS", "Ursache ist eine mitochondriale Energiestoffwechselstörung", "Bradykardie ist ausgeschlossen", "PRIS tritt nur bei Kindern auf"], "correct": 2}, {"category": "Anästhetika", "question": "Welche Aussage zu Etomidat trifft zu?", "options": ["Etomidat besitzt eine ausgeprägte analgetische Wirkung", "Etomidat verursacht eine starke Sympathikusblockade", "Bei Bolusgaben während der Narkoseeinleitung kann es zu Myoklonien kommen", "Die maximale Gesamtdosis ist unbegrenzt", "Etomidat wirkt erst nach mehreren Minuten"], "correct": 2}, {"category": "Anästhetika", "question": "Welche Aussage zu Barbituraten trifft zu?", "options": ["Barbiturate besitzen einen langsamen Wirkeintritt von mehreren Minuten", "Barbiturate werden ausschließlich renal eliminiert", "Bei paravenöser Injektion kann es zu Hautnekrosen kommen", "Barbiturate erhöhen den Hirndruck", "Thiopental besitzt eine lange Wirkdauer aufgrund langsamer Umverteilung"], "correct": 2}, {"category": "Anästhetika", "question": "Welche Aussage zu Thiopental bei Sectio caesarea ist korrekt?", "options": ["Thiopental führt immer zu schlechteren APGAR-Werten als Propofol", "Thiopental beeinflusst den Uterustonus nicht", "Thiopental darf bei Sectio nicht mehr verwendet werden", "Propofol ist bei Sectio klar überlegen", "Stillen ist nach Thiopental nicht möglich"], "correct": 1}, {"category": "Anästhetika", "question": "Worauf ist bei der Gabe von Flumazenil zu achten?", "options": ["Ist ein Antagonist für Opiate", "Hat eine kürzere Wirkdauer als die meisten Benzodiazepine selbst (Rebound Effekt)", "Wirkeintritt nach 30 min", "Hat eine intrinsische Aktivität", "Initiale Dosierung von 0,5mg i.v."], "correct": 1}, {"category": "Opiate", "question": "Welcher Rezeptor vermittelt hauptsächlich die analgetische Wirkung von Opioiden?", "options": ["α2-Rezeptor", "μ-Rezeptor", "β1-Rezeptor", "D2-Rezeptor", "H1-Rezeptor"], "correct": 1}, {"category": "Opiate", "question": "Welche Aussage zu Remifentanil trifft zu?", "options": ["Lange Wirkdauer", "darf nicht intrathekal verabreicht werden", "Ausschließlich orale Gabe", "Keine analgetische Wirkung", "Kein starkes Opioid"], "correct": 1}, {"category": "Opiate", "question": "Welches Opiat zählt zu den partiellen Antagonisten der Opiate?", "options": ["Fentanyl", "Vendal", "Remifentanil", "Piritramid", "Nalbuphin"], "correct": 4}, {"category": "NSAR", "question": "Welche*r Patient*in hat ein besonders erhöhtes Risiko für NSAR-induzierte Nierenfunktionsstörungen?", "options": ["Gesunde*r junge*r Erwachsene*r", "Patient*innen mit Hypovolämie und ACE-Hemmer-Therapie", "Patient*innen mit Hyperthyreose", "Patient*innen mit isolierter Tachykardie", "Patient*innen mit Eisenmangelanämie"], "correct": 1}, {"category": "NSAR", "question": "Welche Aussage zu COX-2-Hemmern trifft zu?", "options": ["Sie erhöhen vor allem das Risiko gastrointestinaler Blutungen", "Sie besitzen keine antipyretische Wirkung", "Sie sind besonders mit einem erhöhten Thromboserisiko assoziiert", "Sie hemmen irreversibel die Thrombozytenaggregation", "Sie erhöhen das Risiko für Entzündungen"], "correct": 2}, {"category": "NSAR", "question": "Welcher Unterschied zwischen Metamizol und Paracetamol ist korrekt?", "options": ["Beide wirken stark entzündungshemmend", "Nur Paracetamol wirkt spasmolytisch", "Metamizol besitzt eine bessere spasmolytische Wirkung", "Paracetamol verursacht häufiger Agranulozytose", "Metamizol und Paracetamol sind in ihrer Wirkung ident"], "correct": 2}, {"category": "NSAR", "question": "Welche Aussage zu Thrombozytenhemmung stimmt?", "options": ["Metamizol hemmt stark die Thrombozytenaggregation", "Paracetamol hemmt irreversibel COX-1", "Weder Metamizol noch Paracetamol besitzen relevante Thrombozytenhemmung", "Beide wirken wie ASS", "Metamizol verlängert regelhaft die Thrombozytenlebensdauer auf über 20 Tage"], "correct": 2}, {"category": "Muskelrelaxantien", "question": "Welches Muskelrelaxans wirkt depolarisierend?", "options": ["Rocuronium", "Vecuronium", "Atracurium", "Succinylcholin", "Cisatracurium"], "correct": 3}, {"category": "Muskelrelaxantien", "question": "Welche schwerwiegende Nebenwirkung ist typisch für Succinylcholin?", "options": ["Hypoglykämie", "Maligne Hyperthermie", "Bradykardie nur bei Erwachsenen", "Hypokalzämie", "Atemalkalose"], "correct": 1}, {"category": "Muskelrelaxantien", "question": "Welche Dosierung von Sugammadex wird zur sofortigen Aufhebung einer neuromuskulären Blockade nach RSI mit hochdosiertem Rocuronium empfohlen?", "options": ["2 mg/kgKG", "4 mg/kgKG", "8 mg/kgKG", "12 mg/kgKG", "16 mg/kgKG"], "correct": 4}, {"category": "Muskelrelaxantien", "question": "Was ist keine Kontraindikation bei der Gabe von Neostigmin?", "options": ["Bradykarde Herzrhythmusstörungen", "Mechanischer Ileus", "Succinylcholin Gabe (Phase I Block)", "TOF von 80%", "TOF von 0%"], "correct": 3}, {"category": "Lokalanästhetika", "question": "Wie wirken Lokalanästhetika auf Nervenzellen?", "options": ["Sie blockieren spannungsabhängige Kaliumkanäle", "Sie blockieren spannungsabhängige Natriumkanäle", "Sie aktivieren Opioidrezeptoren", "Sie aktivieren Kalziumkanäle", "Sie erhöhen die Membranpermeabilität für Kalzium"], "correct": 1}, {"category": "Lokalanästhetika", "question": "Welche Eigenschaft hat der Estertyp im Vergleich zum Amidtyp?", "options": ["Längere Wirkdauer und geringeres Allergierisiko", "Kürzere Wirkdauer und höheres Allergierisiko", "Längere Wirkdauer und höheres Allergierisiko", "Kürzere Wirkdauer und geringeres Allergierisiko", "Gleiche Wirkdauer, aber stärkere analgetische Potenz"], "correct": 1}, {"category": "Lokalanästhetika", "question": "Welches Lokalanästhetikum hat die längste Wirkdauer?", "options": ["Lidocain", "Mepivacain", "Bupivacain", "Chloroprocain", "Prilocain"], "correct": 2}, {"category": "Lokalanästhetika", "question": "Was ist das Antidot bei einer schweren Methämoglobinämie?", "options": ["Naloxon", "Atropin", "Methylenblau", "Flumazenil", "Lipidlösung 20%"], "correct": 2}, {"category": "Lokalanästhetika", "question": "LAST – Welches ist das typische Frühzeichen von ZNS-Seite bei systemischer Lokalanästhetika-Intoxikation?", "options": ["Bewusstlosigkeit", "Krampfanfall", "Periorale Parästhesien (Taubheit/Kribbeln um Mund und Zunge)", "Bradykardie", "Atemstillstand"], "correct": 2}, {"category": "Hämodynamik", "question": "Welches Medikament wirkt als reiner Alpha1-Agonist?", "options": ["Dobutamin", "Phenylephrin", "Adrenalin", "Esmolol", "Milrinon"], "correct": 1}, {"category": "Hämodynamik", "question": "Welche Aussage zu Beta1-Rezeptoren trifft am ehesten zu?", "options": ["Sie führen hauptsächlich zu Bronchodilatation.", "Sie hemmen die Noradrenalinfreisetzung.", "Sie erhöhen die Herzfrequenz und die Kontraktilität.", "Sie verursachen periphere Vasokonstriktion.", "Sie führen zu einer Erhöhung der Lipolyse."], "correct": 2}, {"category": "Hämodynamik", "question": "Welche Nebenwirkungen können bei Adrenalingabe auftreten?", "options": ["Vermindern Arhythmien, senken Blutdruck, Hypoglykämie", "Hypokaliämie, Hyperglykämie, verstärken Arhythmien", "Fieber, erhöhter Speichelfluss", "Bradykardie, Muskelzuckungen, Hyperkaliämie", "Kopfschmerzen, Tachykardie, Erbrechen"], "correct": 1}, {"category": "Hämodynamik", "question": "Welches Medikament eignet sich perioperativ am besten zur Behandlung einer supraventrikulären Tachykardie mit begleitender arterieller Hypertonie aufgrund des raschen Wirkungseintritts und der kurzen Wirkdauer?", "options": ["Levosimendan", "Vasopressin", "Adrenalin", "Esmolol", "Urapidil"], "correct": 3}, {"category": "Hämodynamik", "question": "Was muss bei der Gabe von Vasopressin beachtet werden?", "options": ["Es darf nicht mit Adrenalin kombiniert werden.", "Gewebsischämie und Nekrosenbildung bei Gabe über PVK.", "Bei Gabe über PVK kann eine Thrombophlebitis auftreten.", "Kann sowohl im Bolus, als auch als KI oder im Perfusor gegeben werden.", "Im Notfall darf Vasopressin s.c. gegeben werden."], "correct": 1}, {"category": "Infusionstherapie", "question": "Welche Aussage beschreibt eine balancierte VEL am besten?", "options": ["Sie enthält ausschließlich Natriumchlorid", "Sie dient primär als Eiweißersatz", "Ihre Elektrolytzusammensetzung ähnelt dem Plasma bzw. EZR", "Sie wirkt stark hyperonkotisch", "Sie verbleibt dauerhaft intravasal"], "correct": 2}, {"category": "Infusionstherapie", "question": "Wie verteilt sich ein 1000-ml-VELO-Infusat ungefähr im Körper?", "options": ["75 % intravasal, 25 % interstitiell", "50 % intravasal, 50 % interstitiell", "25 % intravasal, 75 % interstitiell", "100 % intravasal", "Ausschließlich intrazellulär"], "correct": 2}, {"category": "Infusionstherapie", "question": "Welche Aussage zur Volumenwirkung von Humanalbumin 20 % ist korrekt?", "options": ["1 ml Albumin bindet kein zusätzliches Wasser", "Albumin verbleibt nur wenige Minuten intravasal", "1 ml HA 20 % zieht etwa 3–4 ml interstitielles Wasser ins Gefäßsystem", "Albumin wirkt ausschließlich interstitiell", "Albumin reduziert den onkotischen Druck"], "correct": 2}, {"category": "Infusionstherapie", "question": "In welcher Situation kann HA 20 % bei großem Volumenverlust eingesetzt werden?", "options": ["Leichte Exsikkose", "Migräne", "Schweres Trauma oder Verbrennungen mit Hypoproteinämie", "Hyperventilation", "Hypoglykämie"], "correct": 2}, {"category": "Alpha 2", "question": "Welche Aussage über die Wirkung des zentral postsynaptischen α2-Rezeptors trifft am ehesten zu?", "options": ["Steigerung des Sympathikotonus und Tachykardie", "Hemmung des Vagotonus mit Bronchodilatation", "Förderung von Analgesie, Sedierung und Anxiolyse", "Massive Freisetzung von Noradrenalin", "Ausschließliche Wirkung auf periphere Gefäße"], "correct": 2}, {"category": "Alpha 2", "question": "Welche Besonderheit kann bei der initialen Bolusgabe von Clonidin auftreten?", "options": ["Sofortige tiefe Bradykardie ohne RR-Veränderung", "Initialer Blutdruckanstieg durch α1-Wirkung", "Sofortige Atemdepression mit Hyperkapnie", "Vollständige Blockade des Parasympathikus", "Schwere Hypoglykämie innerhalb weniger Minuten"], "correct": 1}, {"category": "Alpha 2", "question": "Welche Aussage zur präsynaptischen peripheren Wirkung von α2-Rezeptoren ist richtig?", "options": ["Verstärkte Ausschüttung von Acetylcholin", "Erhöhung der Dopaminfreisetzung", "Hemmung der Noradrenalinfreisetzung", "Aktivierung der neuromuskulären Endplatte", "Steigerung der Katecholaminsynthese"], "correct": 2}, {"category": "Alpha 2", "question": "Welche Aussage zur Anwendung von Dexmedetomidin in der Intensivmedizin trifft zu?", "options": ["Die maximale Dosierung beträgt 0,2 µg/kgKG/h", "Es wird ausschließlich als Bolus appliziert", "Die Initialdosis liegt typischerweise bei 0,7 µg/kgKG/h", "Eine Dosisänderung zeigt innerhalb weniger Sekunden Wirkung", "Es darf nur bei beatmeten Patienten eingesetzt werden"], "correct": 2}, {"category": "Antiemetika", "question": "Welche Aussage zu PONV trifft zu?", "options": ["Es betrifft nur Kinder", "Frauen sind häufiger betroffen", "Rauchen erhöht das Risiko deutlich", "Regionalanästhesie erhöht das Risiko", "Es tritt ausschließlich postoperativ auf"], "correct": 1}, {"category": "Antiemetika", "question": "Welches Medikament kann zusätzlich antiemetisch wirken?", "options": ["Dexamethason", "Adrenalin", "Atropin", "Noradrenalin", "Lidocain"], "correct": 0}, {"category": "Antiemetika", "question": "Welche Nebenwirkung kann bei Ondansetron auftreten?", "options": ["Bradykardie", "QT-Verlängerung", "Hyperglykämie", "Bronchospasmus", "Nierenversagen"], "correct": 1}, {"category": "Antiemetika", "question": "Welche Rezeptoren werden durch Ondansetron hauptsächlich blockiert?", "options": ["α1-Rezeptoren", "β1-Rezeptoren", "D2-Rezeptoren", "5-HT3-Rezeptoren", "NMDA-Rezeptoren"], "correct": 3}, {"category": "Antiemetika", "question": "Welcher Wirkstoff gehört zu den Dopaminantagonisten?", "options": ["Ondansetron", "Droperidol", "Dexamethason", "Midazolam", "Ketamin"], "correct": 1}, {"category": "PAP", "question": "Welcher Faktor gehört NICHT zum PEN-FAST-Score?", "options": ["Reaktion innerhalb der letzten 5 Jahre", "Therapiepflichtigkeit der Reaktion", "Anaphylaxie oder Angioödem", "Schwere kutane Arzneimittelreaktion", "Positiver Hauttest auf Penicillin"], "correct": 4}, {"category": "PAP", "question": "Wann sollte die perioperative Antibiotikaprophylaxe in der Regel verabreicht werden?", "options": ["Direkt nach Hautschnitt", "2 Stunden nach OP-Beginn", "30–60 Minuten vor Hautschnitt", "Erst nach Wundverschluss", "Am Vorabend der Operation"], "correct": 2}, {"category": "PAP", "question": "Welche Maßnahme wird laut ÖGARI-Checkliste bei Aspiration NICHT empfohlen?", "options": ["Oropharynx absaugen", "Frühzeitige Intubation", "Bronchoskopie erwägen", "Routinemäßige Steroidgabe", "Absaugen über den Tubus vor erstem Beatmungshub"], "correct": 3}, {"category": "PAP", "question": "Welche Aussage beschreibt die Konsequenz einer verspäteten perioperativen Antibiotikaprophylaxe laut Vortrag am zutreffendsten?", "options": ["Eine Antibiotikagabe nach Wundverschluss reduziert die Wundinfektionsrate weiterhin signifikant", "Erfolgt die präoperative Gabe nicht rechtzeitig, sollte auf eine PAP vollständig verzichtet werden", "Ist die präoperative Gabe nicht möglich, soll die Antibiotikagabe frühestmöglich intraoperativ erfolgen, da nach Wundverschluss kein Einfluss mehr auf die Wundinfektionsrate besteht", "Die Wirksamkeit der PAP ist ausschließlich von der Antibiotikadosis abhängig.", "Eine intraoperative Gabe ist nur bei orthopädischen Eingriffen sinnvoll"], "correct": 2}, {"category": "CPR", "question": "Wie wird bei einem schockbaren Rhythmus Amiodaron verabreicht?", "options": ["300mg nach dem 3. Schock und 150mg nach dem 5. Schock", "Gar nicht – Amiodaron ist lt. Guidelines obsolet.", "150mg nach jedem 2. Schock.", "150mg nach dem 3. Schock und 300mg nach dem 5. Schock.", "300mg einmalig nach dem 1.Schock."], "correct": 0}, {"category": "CPR", "question": "Wie ist die Dosierung bei Adrenalin beim Kind?", "options": ["100mcg/kg Körpergewicht", "0,1mg/kg Körpergewicht", "Adrenalin darf bei Kindern bis zum 10 Lebensjahr nicht verwendet werden", "0,01mg/kg Körpergewicht", "Ab den 14. Lebensjahr wie bei Erwachsenen."], "correct": 3}, {"category": "CPR", "question": "Wann wird Adrenalin im Rahmen der CPR sofort gegeben?", "options": ["Wenn ein ZVK vorhanden ist.", "Wenn ein nicht schockbarer Rhythmus besteht.", "Wenn ein Arzt die CPR leitet.", "Wenn ein schockbarer Rhythmus besteht.", "Wenn Defibrillation alleine nicht ausreichend ist."], "correct": 1}, {"category": "CPR", "question": "Wann wird intraoperativ mit Reanimation begonnen?", "options": ["Wenn RR Systolisch unter 30mmHg fällt und eine Bradykardie vorliegt.", "Mit Reanimation wird erst bei Asystolie begonnen.", "Erst wenn 30s die Kurve der Arterie keinen Auswurf mehr zeigt.", "Intraoperativ darf nur mit Herzalarmteam reanimiert werden.", "Wenn RR systolisch unter 50mmHg und das etCO2 trotz Intervention abfällt."], "correct": 4}, {"category": "Pharmakokinetik", "question": "Was beschreibt die Pharmakokinetik?", "options": ["Wie der Körper auf ein Medikament reagiert.", "Welche Nebenwirkungen ein Medikament hat.", "Wie der Körper ein Medikament aufnimmt, verteilt und ausscheidet.", "Wie ein Medikament hergestellt wird.", "Woher ein Medikament stammt."], "correct": 2}, {"category": "Pharmakokinetik", "question": "Welche Verabreichungsform hat eine 100%-ige Bioverfügbarkeit?", "options": ["oral", "sublingual", "transdermal", "intravenös", "rektal"], "correct": 3}, {"category": "Pharmakodynamik", "question": "Was beschreibt die Pharmakodynamik?", "options": ["Die Leberfunktion bei Medikamenteneinnahme.", "Die Wirkung eines Medikaments auf den Körper.", "Die Verpackung von Arzneimitteln.", "Die Bewegung von Medikamenten im Körper.", "Die Ausscheidung von Medikamenten im Körper."], "correct": 1}, {"category": "Pharmakodynamik", "question": "Was passiert im Körper, wenn ein Medikament an einen Rezeptor bindet?", "options": ["Es kann ein biologisches Signal auslösen.", "Es kann sofort ausgeschieden werden.", "Es kann auf die Blutzusammensetzung einwirken.", "Es verändert den pH-Wert des Magens.", "Es reagiert auf Blutbestandteile des Körpers."], "correct": 0}, {"category": "Pharmakodynamik", "question": "Was passiert im Körper, wenn ein Medikament als Agonist an einen Rezeptor bindet?", "options": ["Der Rezeptor wird zerstört.", "Es wird kein Effekt ausgelöst.", "Das Medikament wird sofort abgebaut.", "Es wird ein bestimmter Effekt im Körper aktiviert.", "Der Rezeptor verlässt die Zelle."], "correct": 3}, {"category": "Alpha 2", "question": "Wofür sind zentrale α2-Rezeptoren verantwortlich?", "options": ["erhöhte Sympathikus-Aktivität", "Schmerzlinderung", "verringerte Sympathikus-Aktivität", "Blutdrucksteigerung", "gesteigerte Noradrenalin-Ausschüttung"], "correct": 2}, {"category": "Alpha 2", "question": "Welches Medikament wirkt verstärkt auf α2-Rezeptoren?", "options": ["Paracetamol", "Clonidin", "Ibuprofen", "Dexmedetomidin", "Diazepam"], "correct": 3}, {"category": "Alpha 2", "question": "Welcher Effekt kann nach langer Clonidin-Gabe auftreten?", "options": ["Hypoglykämie", "Rebound-Hypertonie", "chronischer Husten", "Fieber", "Diarrhoe"], "correct": 1}, {"category": "Alpha 2", "question": "Welchen Effekt hat Clonidin (Catapresan®) NICHT?", "options": ["Muskelerschlaffung", "Beruhigung", "Therapie Entzugssymptomatik", "Therapie post-operatives Shivering", "reduzierter Anästhesiebedarf"], "correct": 0}, {"category": "Alpha 2", "question": "Wofür wird Dexmedetomidin (Dexdor®) eingesetzt?", "options": ["Halsschmerzen", "Obstruktion der unteren Atemwege", "Schlaflosigkeit", "Sedierung auf Intensivstation", "Krampflösung"], "correct": 3}, {"category": "Antiemetika", "question": "Was bedeutet die Abkürzung PONV?", "options": ["postoperative Nervenverletzung", "postoperative Narkoseverzögerung", "postoperative Übelkeit und Erbrechen", "präoperative Narkosevorbereitung", "pathologische Organverlagerung"], "correct": 2}, {"category": "Antiemetika", "question": "Wann tritt PONV typischerweise auf?", "options": ["nur während der OP", "innerhalb von 5 Tagen nach der OP", "nur bei ambulanten Operationen", "nur bei Kindern", "24-48h nach dem Eingriff"], "correct": 4}, {"category": "Antiemetika", "question": "Welcher dieser Faktoren erhöht NICHT das PONV-Risiko?", "options": ["weibliches Geschlecht", "Raucherstatus", "frühere Kinetosen", "junge Patienten", "Opiate nach der OP"], "correct": 1}, {"category": "Antiemetika", "question": "Welche Anästhesieform ist mit einem erhöhten PONV-Risiko verbunden?", "options": ["Regionalanästhesie", "Lokalanästhesie", "Sedierung", "Vollnarkose", "Spinalanästhesie"], "correct": 3}, {"category": "Antiemetika", "question": "Welche OP zählt zu den Eingriffen mit hohem PONV-Risiko?", "options": ["Blinddarm-OP", "Hautbiopsie", "Strabismus-OP", "Nasenscheidewand-OP", "Herzkatheter-Untersuchung"], "correct": 2}, {"category": "Antiemetika", "question": "Welcher Patient sollte eine PONV-Prophylaxe erhalten?", "options": ["60-jähriger Raucher mit kurzer Augen-OP", "45-jährige Frau, Nichtraucherin, bekommt Vollnarkose und Opiate postoperativ", "30-jähriger Mann mit Regionalanästhesie ohne Vorerkrankungen", "70-jährige Frau mit lokaler Hautentfernung", "20-jähriger Mann mit Lungenentzündung unter Antibiotika"], "correct": 1}, {"category": "Infusionstherapie", "question": "Was ist das primäre Ziel einer balancierten Vollelektrolytlösung (VEL)?", "options": ["Blutzucker senken", "Blutdruck erhöhen", "physiologische Elektrolytzusammensetzung bieten", "Leberfunktion verbessern", "Interstitium füllen"], "correct": 2}, {"category": "Infusionstherapie", "question": "Wie viel Prozent einer 500ml VEL-Infusion verbleiben im Blutkreislauf?", "options": ["10 %", "25 %", "50 %", "75 %", "100 %"], "correct": 1}, {"category": "Infusionstherapie", "question": "Welche Substanz wird zur Volumenexpansion bei Hypalbuminämie verwendet?", "options": ["Ringer-Laktat", "NaCl 0,9%", "Glucose 5%", "Humanalbumin 20%", "Vollelektrolytlösung (VEL)"], "correct": 3}, {"category": "NSAR", "question": "Was ist die Hauptwirkung von NSAR?", "options": ["Steigerung des Appetits", "Hemmung der Prostaglandinbildung", "Förderung der Blutbildung", "Muskelaufbau", "Hemmung der Insulinausschüttung"], "correct": 1}, {"category": "NSAR", "question": "Welche Nebenwirkung ist typisch für NSAR bei längerer Anwendung?", "options": ["Hörverlust", "Hautausschlag", "Gastritis oder Magengeschwüre", "Gewichtszunahme", "Muskelschwäche"], "correct": 2}, {"category": "NSAR", "question": "Welche NSAR-Wirkung ist bei COX-2-Hemmung erwünscht?", "options": ["Magenreizung", "Blutverdünnung", "Flüssigkeitsretention", "Thrombozytenaktivierung", "Schmerz- und Entzündungshemmung"], "correct": 4}, {"category": "NSAR", "question": "Was ist eine seltene, aber schwerwiegende Nebenwirkung von Metamizol?", "options": ["Hypotonie", "Agranulozytose", "Osteoporose", "Diabetes mellitus", "allergische Reaktion"], "correct": 1}, {"category": "NSAR", "question": "Welche Aussage trifft auf Paracetamol zu?", "options": ["Es ist stark entzündungshemmend.", "Es darf in der Schwangerschaft nicht angewendet werden.", "Es wirkt über die Hemmung der Prostaglandine im ZNS.", "Es hat eine hohe Magenunverträglichkeit.", "Es wirkt stark spasmolytisch."], "correct": 2}, {"category": "Antibiotika", "question": "Wann sollte die Antibiotikaprophylaxe idealerweise verabreicht werden?", "options": ["1 Tag präoperativ", "während der Narkoseeinleitung", "30–60 min. vor Hautschnitt", "direkt nach Hautverschluss", "im Aufwachraum"], "correct": 2}, {"category": "Antibiotika", "question": "Wie viele Patienten mit angegebener Penicillin-Allergie vertragen es tatsächlich?", "options": ["10 %", "25 %", "50 %", "95 %", "100 %"], "correct": 3}, {"category": "Antibiotika", "question": "Wann ist eine Wiederholung der Antibiotikagabe während der Operation notwendig?", "options": ["nach 1 Stunde", "bei Hautschnitt", "bei Operationen über 2 Stunden", "nach doppelter Halbwertszeit oder hohem Blutverlust", "nach Narkoseeinleitung"], "correct": 3}, {"category": "RSI", "question": "Ein Patient erhält im Rahmen einer Rapid Sequence Induction (RSI) Rocuronium in hoher Dosis (1,2 mg/kg). Es liegt eine tiefe neuromuskuläre Blockade vor, die aufgehoben werden muss. Welche Dosierung von Sugammadex (Bridion) ist in dieser Notfallsituation indiziert?", "options": ["1 mg/kg", "2 mg/kg", "4 mg/kg", "8 mg/kg", "16 mg/kg"], "correct": 4}];
 
-            document.querySelectorAll('.option').forEach(opt => {
-                opt.addEventListener('click', () => {
-                    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-                    opt.classList.add('selected');
-                });
-            });
-        }
+let mode="practice", pool=[], idx=0, answers=[], selectedCats=new Set();
 
-        function checkAnswer() {
-            const selected = document.querySelector('input[name="answer"]:checked');
-            if (!selected) {
-                alert('Bitte wählen Sie eine Antwort!');
-                return;
-            }
+const $=id=>document.getElementById(id);
+function show(sec){["start","practiceFilter","quiz","result"].forEach(s=>$(s).classList.add("hidden"));$(sec).classList.remove("hidden");}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const LETTERS=["A","B","C","D","E"];
 
-            const answer = parseInt(selected.value);
-            const q = filteredQuestions[currentQuestion];
-            const isCorrect = answer === q.correct;
+function goHome(){
+  show("start");$("homeBtn").style.display="none";$("pbar").style.display="none";
+  $("examSetup").style.display="none";
+}
+function showExamSetup(){$("examSetup").style.display="block";$("examSetup").scrollIntoView({behavior:"smooth"});}
 
-            answered[currentQuestion] = { answer, isCorrect };
+/* ---------- PRACTICE ---------- */
+function startPractice(){
+  mode="practice";
+  const cats=[...new Set(QUESTIONS.map(q=>q.category))];
+  selectedCats=new Set(cats);
+  const wrap=$("catChips");wrap.innerHTML="";
+  const all=document.createElement("div");
+  all.className="chip on";all.textContent="Alle Themen";all.dataset.all="1";
+  all.onclick=()=>{const on=all.classList.toggle("on");
+    document.querySelectorAll("#catChips .chip[data-cat]").forEach(c=>{c.classList.toggle("on",on);
+      if(on)selectedCats.add(c.dataset.cat);else selectedCats.delete(c.dataset.cat);});};
+  wrap.appendChild(all);
+  cats.forEach(c=>{
+    const n=QUESTIONS.filter(q=>q.category===c).length;
+    const el=document.createElement("div");
+    el.className="chip on";el.dataset.cat=c;el.textContent=`${c} (${n})`;
+    el.onclick=()=>{const on=el.classList.toggle("on");
+      if(on)selectedCats.add(c);else selectedCats.delete(c);
+      syncAll();};
+    wrap.appendChild(el);
+  });
+  function syncAll(){const cels=document.querySelectorAll("#catChips .chip[data-cat]");
+    const allOn=[...cels].every(c=>c.classList.contains("on"));all.classList.toggle("on",allOn);}
+  show("practiceFilter");$("homeBtn").style.display="inline-flex";$("pbar").style.display="none";
+}
+function beginPractice(){
+  pool=QUESTIONS.filter(q=>selectedCats.has(q.category)).map(q=>q);
+  if(pool.length===0){alert("Bitte mindestens ein Thema auswählen.");return;}
+  pool=shuffle(pool);
+  idx=0;answers=new Array(pool.length).fill(null);
+  $("pbar").style.display="block";
+  renderQ();show("quiz");
+}
 
-            if (isCorrect) {
-                score++;
-                document.getElementById('feedback').textContent = '✓ Richtig!';
-                document.getElementById('feedback').className = 'feedback show correct';
-                document.querySelectorAll('.option').forEach((opt, idx) => {
-                    if (idx === q.correct) opt.classList.add('correct');
-                });
-            } else {
-                document.getElementById('feedback').textContent = `✗ Falsch. Richtige Antwort: ${String.fromCharCode(97 + q.correct)}) ${q.options[q.correct]}`;
-                document.getElementById('feedback').className = 'feedback show incorrect';
-                document.querySelectorAll('.option').forEach((opt, idx) => {
-                    if (idx === q.correct) opt.classList.add('correct');
-                    if (idx === answer && answer !== q.correct) opt.classList.add('incorrect');
-                });
-            }
+/* ---------- EXAM ---------- */
+function startExam(){
+  mode="exam";
+  let n=parseInt($("examCount").value,10);
+  let all=shuffle(QUESTIONS);
+  pool=(n===0||n>=all.length)?all:all.slice(0,n);
+  idx=0;answers=new Array(pool.length).fill(null);
+  $("homeBtn").style.display="inline-flex";$("pbar").style.display="block";
+  renderQ();show("quiz");
+}
 
-            document.getElementById('submitBtn').disabled = true;
-            updateProgress();
-        }
+/* ---------- RENDER ---------- */
+function renderQ(){
+  const q=pool[idx];
+  $("qCat").textContent=q.category;
+  $("qIdx").textContent=`Frage ${idx+1} / ${pool.length}`;
+  $("qText").textContent=q.question;
+  $("pfill").style.width=((idx)/(pool.length)*100)+"%";
+  const wrap=$("qOpts");wrap.innerHTML="";
+  const ans=answers[idx];
+  q.options.forEach((opt,i)=>{
+    const b=document.createElement("button");
+    b.className="opt";
+    b.innerHTML=`<span class="key">${LETTERS[i]}</span><span>${opt}</span><span class="mark"></span>`;
+    if(mode==="practice"){
+      if(ans!==null){
+        b.disabled=true;
+        if(i===q.correct){b.classList.add("correct");b.querySelector(".mark").textContent="✓";}
+        if(i===ans&&ans!==q.correct){b.classList.add("wrong");b.querySelector(".mark").textContent="✗";}
+      }else{
+        b.onclick=()=>pick(i);
+      }
+    }else{ // exam
+      if(ans!==null&&i===ans){b.classList.add("picked-exam");}
+      b.onclick=()=>pick(i);
+    }
+    wrap.appendChild(b);
+  });
+  // feedback (practice only)
+  const fb=$("qFeed");fb.className="feedback";
+  if(mode==="practice"&&ans!==null){
+    if(ans===q.correct){fb.classList.add("show","good");fb.textContent="✓ Richtig!";}
+    else{fb.classList.add("show","bad");fb.textContent=`✗ Falsch. Richtig ist: ${LETTERS[q.correct]}) ${q.options[q.correct]}`;}
+  }
+  // nav
+  $("prevBtn").style.visibility=idx>0?"visible":"hidden";
+  const lastQ=idx===pool.length-1;
+  $("nextBtn").textContent=lastQ?(mode==="exam"?"Abgeben ✓":"Auswertung ✓"):"Weiter ›";
+  $("nextBtn").disabled=(mode==="exam"&&ans===null);
+  updateLive();
+}
+function pick(i){
+  answers[idx]=i;
+  if(mode==="practice"){renderQ();}
+  else{ // exam: just mark selection, allow change, enable next
+    renderQ();
+  }
+}
+function updateLive(){
+  if(mode==="practice"){
+    const done=answers.filter(a=>a!==null).length;
+    const corr=answers.filter((a,k)=>a!==null&&a===pool[k].correct).length;
+    $("liveScore").textContent=`Beantwortet: ${done}/${pool.length} · Richtig: ${corr}`;
+  }else{
+    const done=answers.filter(a=>a!==null).length;
+    $("liveScore").textContent=`Beantwortet: ${done}/${pool.length}`;
+  }
+}
+function prevQ(){if(idx>0){idx--;renderQ();}}
+function nextQ(){
+  if(idx<pool.length-1){idx++;renderQ();}
+  else{finish();}
+}
 
-        function nextQuestion() {
-            if (currentQuestion < filteredQuestions.length - 1) {
-                currentQuestion++;
-                displayQuestion();
-            } else {
-                showResults();
-            }
-        }
+/* ---------- RESULT ---------- */
+function austrianGrade(p){
+  if(p>=90)return{n:1,l:"Sehr gut",c:"#2f9e44"};
+  if(p>=80)return{n:2,l:"Gut",c:"#66a80f"};
+  if(p>=70)return{n:3,l:"Befriedigend",c:"#f59f00"};
+  if(p>=60)return{n:4,l:"Genügend",c:"#e8590c"};
+  return{n:5,l:"Nicht genügend",c:"#e03131"};
+}
+function finish(){
+  const total=pool.length;
+  const correct=answers.filter((a,k)=>a!==null&&a===pool[k].correct).length;
+  const pct=Math.round(correct/total*100);
+  $("pfill").style.width="100%";
+  if(mode==="exam"){
+    const g=austrianGrade(pct);
+    $("gradeCircle").style.borderColor=g.c;$("gradeCircle").style.color=g.c;
+    $("gradeNum").textContent=g.n;$("gradeLbl").textContent=g.l;
+    $("gradeCircle").parentElement.querySelector;
+    $("retryBtn").textContent="Neue Prüfung ▶";
+  }else{
+    const g=austrianGrade(pct);
+    $("gradeCircle").style.borderColor=g.c;$("gradeCircle").style.color=g.c;
+    $("gradeNum").textContent=g.n;$("gradeLbl").textContent=g.l;
+    $("retryBtn").textContent="Nochmal üben ▶";
+  }
+  $("resScore").textContent=`${correct} von ${total} richtig`;
+  const bar=$("resBar");bar.style.width=Math.max(pct,8)+"%";
+  bar.textContent=pct+"%";
+  bar.style.background=austrianGrade(pct).c;
+  $("resMeta").textContent=(mode==="exam"?"Prüfungsmodus":"Übungsmodus")+` · ${pct}% korrekt`;
+  // review wrong
+  const wrong=[];
+  answers.forEach((a,k)=>{if(a===null||a!==pool[k].correct)wrong.push(k);});
+  const list=$("reviewList");list.innerHTML="";
+  if(wrong.length===0){
+    $("reviewTitle").textContent="Perfekt – keine Fehler! 🎉";
+    $("reviewCard").querySelector("#reviewList").innerHTML="";
+  }else{
+    $("reviewTitle").textContent=`Falsch / offen (${wrong.length})`;
+    wrong.forEach(k=>{
+      const q=pool[k];const a=answers[k];
+      const el=document.createElement("div");el.className="rev-item";
+      el.innerHTML=`<div class="rq">${q.category} · ${q.question}</div>`+
+        (a!==null?`<div class="ra">Deine Antwort: ${LETTERS[a]}) ${q.options[a]}</div>`:`<div class="ra">Nicht beantwortet</div>`)+
+        `<div class="rc">Richtig: ${LETTERS[q.correct]}) ${q.options[q.correct]}</div>`;
+      list.appendChild(el);
+    });
+  }
+  $("pbar").style.display="none";
+  show("result");window.scrollTo(0,0);
+}
+function retry(){ if(mode==="exam"){show("start");goHome();showExamSetup();} else {startPractice();} }
 
-        function previousQuestion() {
-            if (currentQuestion > 0) {
-                currentQuestion--;
-                displayQuestion();
-            }
-        }
-
-        function showResults() {
-            document.getElementById('quizContainer').style.display = 'none';
-            document.getElementById('results').classList.add('show');
-            document.getElementById('scoreValue').textContent = `${score}/${filteredQuestions.length}`;
-        }
-
-        function resetQuiz() {
-            currentQuestion = 0;
-            score = 0;
-            answered = [];
-            document.getElementById('results').classList.remove('show');
-            document.getElementById('quizContainer').style.display = 'block';
-            filterByCategory('all');
-        }
-
-        function updateProgress() {
-            const progress = ((currentQuestion + 1) / filteredQuestions.length) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-        }
-
-        document.getElementById('submitBtn').addEventListener('click', () => {
-            if (document.querySelector('input[name="answer"]:checked')) {
-                checkAnswer();
-            } else {
-                alert('Bitte wählen Sie eine Antwort!');
-            }
-        });
-
-        document.getElementById('resetBtn').addEventListener('click', resetQuiz);
-        document.getElementById('nextBtn').addEventListener('click', nextQuestion);
-        document.getElementById('prevBtn').addEventListener('click', previousQuestion);
-
-        init();
-    </script>
+goHome();
+</script>
 </body>
 </html>
